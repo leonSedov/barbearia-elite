@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELITTE BARBER — Gestão</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="image.png" />
+  
+  <!-- Manifest PWA -->
+  <link rel="manifest" href="manifest.json" />
+  
+  <!-- iOS (iPhone/iPad) -->
+  <link rel="apple-touch-icon" href="image.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="image.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Elitte" />
+  
+  <!-- Android/Chrome -->
+  <meta name="theme-color" content="#141414" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  
+  <style>
+    /* =============================================
+       CSS — ELITTE BARBER
+    ============================================= */
+    :root {
+        --tinta: #141414; --tinta-suave: #2a2927;
+        --pedra: #e7e6df; --pedra-card: #f8f7f3;
+        --latao: #b3aa98; --latao-escuro: #6c6456;
+        --bordo: #8c3a32; --bordo-escuro: #6b2a24;
+        --navalha: #3d5a4b; --texto: #151515; --texto-suave: #6a6761; --linha: #d6d4cc;
+        --perigo: #a33b30; --info: #4d5b69; --whatsapp: #25D366;
+        --claro: #f2f1ec;
+        --fonte-titulo: 'Cormorant Garamond', 'Times New Roman', serif;
+        --fonte-cartaz: 'Jost', 'Inter', sans-serif;
+        --fonte-corpo: 'Jost', 'Inter', sans-serif;
+        --fonte-dados: 'Jost', 'Inter', sans-serif;
+        --radius: 4px; --radius-peq: 3px;
+        --sombra: 0 12px 30px -18px rgba(20,20,20,0.30);
+        --sombra-forte: 0 26px 60px -24px rgba(20,20,20,0.45);
+        --faixa: linear-gradient(90deg, #141414, #141414);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--pedra);
+      color: var(--texto);
+      font-family: var(--fonte-corpo);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--pedra); }
+    ::-webkit-scrollbar-thumb { background: var(--latao); border-radius: 3px; }
+
+    .faixa-topo {
+      height: 5px;
+      width: 100%;
+      background: var(--faixa);
+      background-size: 70px 70px;
+      animation: girarFaixa 3.2s linear infinite;
+    }
+    @keyframes girarFaixa {
+      from { background-position: 0 0; }
+      to { background-position: 70px 0; }
+    }
+
+    /* ================= MENU HAMBÚRGUER (MOBILE) ================= */
+    .mobile-header {
+        display: none;
+        position: fixed;
+        top: 5px;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: var(--tinta);
+        border-bottom: 1px solid rgba(181,171,152,0.25);
+        z-index: 101;
+        align-items: center;
+        padding: 0 16px;
+        gap: 16px;
+    }
+    .hamburger-btn {
+        display: none;
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        padding: 0;
+    }
+    .hamburger-line {
+        width: 24px;
+        height: 2px;
+        background: var(--latao);
+        transition: all 0.3s ease;
+    }
+    .hamburger-btn.active .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px);
+    }
+    .hamburger-btn.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger-btn.active .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
+    .mobile-logo {
+        flex: 1;
+        font-family: var(--fonte-cartaz);
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--pedra);
+        white-space: nowrap;
+    }
+    .mobile-logo-text {
+        color: var(--latao);
+    }
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(20,20,20, 0.5);
+        z-index: 99;
+        backdrop-filter: blur(4px);
+    }
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* ================= SIDEBAR ================= */
+    #sidebar {
+      position: fixed;
+      left: 0;
+      top: 5px;
+      bottom: 0;
+      width: 72px;
+      background: var(--tinta);
+      border-right: 1px solid rgba(181,171,152,0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 22px 0;
+      z-index: 100;
+      transition: width .3s ease;
+      overflow: hidden;
+    }
+    #sidebar:hover { width: 220px; }
+    .sidebar-logo {
+      font-family: var(--fonte-cartaz);
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--pedra);
+      white-space: nowrap;
+      overflow: hidden;
+      width: 100%;
+      text-align: center;
+      padding: 0 16px;
+      margin-bottom: 18px;
+    }
+    .sidebar-logo span:last-child { color: var(--latao); opacity: 0; transition: opacity .2s; }
+    #sidebar:hover .sidebar-logo span:last-child { opacity: 1; }
+    .sidebar-logo-icon { min-width: 40px; display: inline-block; }
+
+    .nav-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 16px;
+      transition: background .15s, border-color .15s;
+      border-left: 3px solid transparent;
+      white-space: nowrap;
+    }
+    .nav-item:hover { background: rgba(181,171,152,0.1); border-left-color: var(--latao-escuro); }
+    .nav-item.active { background: rgba(181,171,152,0.16); border-left-color: var(--latao); }
+    .nav-item.active .nav-icon, .nav-item.active .nav-label { color: var(--latao); }
+    .nav-icon { min-width: 40px; text-align: center; color: #9a968c; font-size: 1.05rem; }
+    .nav-label { font-size: 0.82rem; font-weight: 500; color: #9a968c; opacity: 0; transition: opacity .2s; }
+    #sidebar:hover .nav-label { opacity: 1; }
+
+    /* ================= APP ================= */
+    #app {
+      margin-left: 72px;
+      min-height: 100vh;
+      padding: 36px 40px 60px;
+      max-width: 1180px;
+    }
+
+    .page-header {
+      padding: 0 0 24px;
+      border-bottom: 2px solid var(--linha);
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::after {
+      content: '▦';
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 64px;
+      color: rgba(181,171,152,0.15);
+      pointer-events: none;
+    }
+    .page-title {
+      font-family: var(--fonte-cartaz);
+      font-size: 1.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--tinta);
+      margin-bottom: 4px;
+    }
+    .page-subtitle {
+      color: var(--texto-suave);
+      font-size: 0.88rem;
+    }
+
+    .card {
+      background: var(--pedra-card);
+      border: 1px solid var(--linha);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--sombra);
+      position: relative;
+      overflow: hidden;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--faixa);
+      background-size: 48px 48px;
+    }
+    .card:hover { border-color: var(--latao); }
+    .card-title {
+      font-family: var(--fonte-cartaz);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--tinta);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--linha);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* CALENDÁRIO */
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .cal-title {
+      font-family: var(--fonte-cartaz);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--tinta);
+      letter-spacing: 0.04em;
+    }
+    .cal-btn {
+      background: var(--pedra);
+      border: 1px solid var(--linha);
+      color: var(--tinta);
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-peq);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s, border-color .15s;
+    }
+    .cal-btn:hover { background: var(--linha); border-color: var(--latao); }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .cal-header {
+      text-align: center;
+      font-family: var(--fonte-cartaz);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--tinta);
+      text-transform: uppercase;
+      padding: 8px 0;
+    }
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-peq);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s;
+      background: var(--pedra);
+      border: 1px solid transparent;
+      position: relative;
+      min-height: 48px;
+      color: var(--texto);
+    }
+    .cal-day:hover:not(.empty) {
+      border-color: var(--latao);
+      background: var(--pedra-card);
+    }
+    .cal-day.today {
+      border-color: var(--tinta);
+      color: var(--tinta);
+      font-weight: 700;
+    }
+    .cal-day.empty { background: transparent; cursor: default; }
+    .cal-day.selected {
+      border-color: var(--latao);
+      background: rgba(181,171,152,0.2);
+      color: var(--tinta);
+      font-weight: 700;
+      box-shadow: 0 0 0 2px var(--latao);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--linha);
+      margin: 24px 0;
+    }
+
+    .section-label {
+      font-family: var(--fonte-cartaz);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--tinta);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .time-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .time-badge {
+      padding: 8px 4px;
+      border-radius: var(--radius-peq);
+      text-align: center;
+      font-size: 0.75rem;
+      background: var(--pedra);
+      border: 1px solid var(--linha);
+      font-weight: 600;
+      transition: border-color .15s, background .15s;
+    }
+    .time-badge.busy {
+      border-color: var(--perigo);
+      color: var(--perigo);
+      background: rgba(168,51,42,0.06);
+    }
+    .time-badge.free {
+      border-color: var(--navalha);
+      color: var(--navalha);
+      background: rgba(47,93,80,0.06);
+    }
+
+    /* ITENS DE AGENDAMENTO */
+    .agendamento-item {
+      border: 1px solid var(--linha);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      background: var(--pedra);
+      transition: border-color .15s, background .15s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .agendamento-item:hover {
+      border-color: var(--latao);
+      background: var(--pedra-card);
+    }
+    .agendamento-item .hora {
+      font-family: var(--fonte-dados);
+      font-weight: 600;
+      color: var(--tinta);
+      font-size: 0.95rem;
+    }
+    .agendamento-item .cliente {
+      font-weight: 600;
+      color: var(--texto);
+      font-size: 1rem;
+    }
+    .agendamento-item .servico {
+      color: var(--texto-suave);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--whatsapp);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: var(--radius-peq);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform .15s;
+    }
+    .whatsapp-link:hover { transform: scale(1.04); }
+
+    .btn-deletar {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: 1px solid var(--perigo);
+      color: var(--perigo);
+      padding: 4px 12px;
+      border-radius: var(--radius-peq);
+      font-size: 0.7rem;
+      font-weight: 600;
+      transition: background .15s, color .15s;
+    }
+    .btn-deletar:hover {
+      background: var(--perigo);
+      color: #fff;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(181,171,152,0.15);
+      color: var(--latao-escuro);
+      border: 1px solid var(--latao);
+    }
+    .status-badge.confirmado { background: #eaf2ee; color: var(--navalha); border-color: var(--navalha); }
+    .status-badge.reservado { background: #eeede6; color: var(--latao-escuro); border-color: var(--latao); }
+
+    .empty-state {
+      text-align: center;
+      color: var(--texto-suave);
+      padding: 30px;
+      border: 1px solid var(--linha);
+      border-radius: var(--radius);
+      background: var(--pedra);
+    }
+    .empty-state .icon { font-size: 2.4rem; color: var(--latao); margin-bottom: 8px; }
+
+    /* LOADER / TOAST */
+    .loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(231,230,223,0.92);
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+    }
+    .loader-overlay.visible { display: flex; }
+    .loader-ring {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid var(--linha);
+      border-top-color: var(--tinta);
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text {
+      margin-top: 18px;
+      font-family: var(--fonte-cartaz);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--tinta);
+    }
+
+    #toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--pedra-card);
+      border: 1px solid var(--linha);
+      border-radius: var(--radius);
+      min-width: 300px;
+      box-shadow: var(--sombra-forte);
+      animation: slideIn .35s ease;
+      font-size: 0.85rem;
+      color: var(--texto);
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast.success { border-color: var(--navalha); }
+    .toast.error { border-color: var(--perigo); }
+    .toast.info { border-color: var(--latao); }
+    .toast-icon { font-size: 1.1rem; color: var(--tinta); }
+    .toast-msg { flex: 1; font-size: 0.85rem; line-height: 1.5; }
+
+    /* ================= RESPONSIVIDADE ================= */
+    @media (max-width: 880px) {
+        .mobile-header { display: flex; }
+        .hamburger-btn { display: flex; }
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 65px;
+            bottom: 0;
+            width: 280px;
+            height: auto;
+            max-height: calc(100vh - 65px);
+            overflow-y: auto;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 102;
+        }
+        #sidebar.active { transform: translateX(0); }
+        #sidebar:hover { width: 280px; }
+        .sidebar-logo span:last-child { opacity: 1; }
+        .nav-label { opacity: 1; }
+        #app {
+            margin-left: 0;
+            padding-top: 80px;
+        }
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+        .time-status-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 520px) {
+        #app {
+            padding: 80px 16px 40px;
+        }
+        .page-title {
+            font-size: 1.3rem;
+        }
+        .time-status-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .agendamento-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .card {
+            padding: 16px;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .mobile-logo { font-size: 0.8rem; }
+        #app { padding: 80px 12px 40px; }
+        .page-title { font-size: 1rem; }
+        .time-status-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+  
+    /* =========================================================
+       ELITTE BARBER — TEMA VISUAL
+       Preto + off-white acinzentado + serifada do logo.
+       Só aparência: funções e webhooks não foram alterados.
+    ========================================================= */
+    /* paleta: ver :root no início do <style> */
+    body { font-variant-numeric: lining-nums tabular-nums; }
+    ::selection { background: #141414; color: var(--claro); }
+    .faixa-topo { animation: none !important; background: #141414 !important; }
+    .card::before, .card--faixa::before, .edit-modal::before, .bloco-divisao::before, .wizard-caixa::before { height: 2px !important; }
+    .stat-card::before { height: 2px !important; background: linear-gradient(90deg, #141414, transparent) !important; }
+    .coroa { width: 26px; height: 20px; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+    /* Títulos na serifada do logo */
+    .page-title, .login-box h1, .modal h2, .perfil-info h1, .step__titulo, #step-sucesso h2,
+    .vazio h3, .secao-titulo, .edit-modal-title, .cal-title, .calendar-header span, .selected-date-title {
+        font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: 0.06em;
+    }
+    .page-title { font-size: 2.3rem; line-height: 1.05; }
+    .page-header { border-bottom: 1px solid rgba(20,20,20,0.55); }
+    .page-subtitle { letter-spacing: 0.02em; }
+    .card-title, .sidebar-card__titulo { letter-spacing: 0.2em; font-weight: 500; }
+    .kpi-title, .stat-label, .metric-label, .mini-kpi-title, .section-label, .bloco-divisao .rotulo,
+    .wizard__legenda, .cal-header, .weekday { letter-spacing: 0.16em; font-weight: 500; }
+    .metric-value, .kpi-value, .stat-value, .bloco-divisao .valor, .pagamento-info__valor,
+    .edit-total-box strong, .pagamento-resumo__linha.total strong, .mini-kpi-value {
+        font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: 0.01em;
+        font-variant-numeric: lining-nums tabular-nums;
+    }
+    .metric-value { font-size: 2.6rem; color: var(--texto); }
+    .kpi-value { font-size: 1.85rem; }
+    .mini-kpi-value { font-size: 1.3rem; }
+    .stat-value { font-size: 2rem; color: var(--texto); }
+    .card:hover { border-color: #a9a69e; }
+
+    /* Botões */
+    .login-box .btn-entrar, .modal .btn-enviar, .btn-cta, .btn-agendar-linha, .btn-acao, .btn,
+    .btn-primary, .btn-outline, .btn-cancel, .btn-atalho, .btn-upload, .btn-mini {
+        letter-spacing: 0.16em; font-weight: 500;
+    }
+    .cliente-item .cliente-badge, .btn-recargar { background: #141414 !important; color: var(--claro) !important; }
+    .btn-refresh:hover, .btn-ver-img:hover { background: #141414; border-color: #141414; color: var(--claro); }
+
+    /* Sidebar */
+    #sidebar { background: #141414; border-right: 1px solid rgba(242,241,236,0.08); }
+    .sidebar-logo {
+        display: flex; align-items: center; justify-content: flex-start; gap: 6px;
+        font-family: var(--fonte-titulo); font-size: 1.35rem; font-weight: 600; letter-spacing: 0.16em;
+        color: var(--claro); text-align: left; padding: 0 16px; margin-bottom: 26px;
+    }
+    .sidebar-logo-icon { min-width: 40px; display: inline-flex !important; justify-content: center; color: var(--claro); }
+    .sidebar-logo span:last-child { color: var(--claro); }
+    .sidebar-perfil { border-bottom-color: rgba(242,241,236,0.10) !important; }
+    .sidebar-perfil__foto { border: 1px solid rgba(242,241,236,0.55) !important; filter: grayscale(1); }
+    .sidebar-perfil__nome { font-family: var(--fonte-titulo); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.04em; color: var(--claro); }
+    .nav-icon, .nav-label { color: #9a968c; }
+    .nav-label { letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; }
+    .nav-item:hover { background: rgba(242,241,236,0.05); border-left-color: rgba(242,241,236,0.35); }
+    .nav-item.active { background: rgba(242,241,236,0.08); border-left-color: var(--claro); }
+    .nav-item.active .nav-icon, .nav-item.active .nav-label { color: var(--claro); }
+
+    /* Cabeçalho mobile */
+    .mobile-header { background: #141414; border-bottom: 1px solid rgba(242,241,236,0.08); }
+    .hamburger-line { background: var(--claro); }
+    .mobile-logo {
+        display: flex; align-items: center; gap: 8px; font-family: var(--fonte-titulo);
+        font-size: 1.25rem; font-weight: 600; letter-spacing: 0.16em; color: var(--claro);
+    }
+    .mobile-logo .coroa { width: 22px; height: 17px; }
+    .mobile-logo-text {
+        font-family: var(--fonte-cartaz); font-size: 0.58rem; font-weight: 400;
+        letter-spacing: 0.42em; color: var(--latao); margin-left: 2px;
+    }
+    .notif-bell-mobile { color: var(--claro) !important; }
+    .notif-badge { border-color: #141414 !important; }
+
+    /* Login */
+    #login-overlay { background: rgba(14,14,14,0.97) !important; }
+    .login-box { border-top: none !important; background: var(--pedra) !important; padding: 46px 38px 36px !important; }
+    .login-box .login-icon { color: var(--texto); margin-bottom: 6px; line-height: 1; }
+    .login-box .login-icon .coroa { width: 46px; height: 35px; }
+    .login-box h1 { font-size: 2.7rem; letter-spacing: 0.1em; margin-bottom: 0; line-height: 1; }
+    .login-marca {
+        font-family: var(--fonte-cartaz); font-size: 0.72rem; letter-spacing: 0.5em; padding-left: 0.5em;
+        text-transform: uppercase; color: var(--texto); margin: 8px 0 16px;
+    }
+    .login-box input { background: var(--pedra-card); }
+
+    /* Loader */
+    .loader-ring { border-top-color: #141414 !important; }
+    .loader-text { letter-spacing: 0.3em; }
+
+    .page-header::after {
+        content: "" !important; width: 70px; height: 52px; font-size: 0 !important;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 24' fill='none' stroke='%23141414' stroke-width='1.2'%3E%3Cpath d='M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z'/%3E%3C/svg%3E") center / contain no-repeat; opacity: 0.18;
+    }
+</style>
+</head>
+<body>
+
+<div class="faixa-topo" aria-hidden="true"></div>
+
+<!-- MOBILE HEADER -->
+<div class="mobile-header">
+  <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu" aria-expanded="false">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <div class="mobile-logo"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg><span>Elitte</span><span class="mobile-logo-text">Barber</span></div>
+</div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- LOADER -->
+  <div class="loader-overlay" id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">CONSULTANDO AGENDA...</div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo"><span class="sidebar-logo-icon"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg></span><span>Elitte</span></div>
+
+    <a href="index.html" class="nav-item">
+      <span class="nav-icon">◈</span>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="financeiro.html"  class="nav-item">
+      <span class="nav-icon">◎</span>
+      <span class="nav-label">Financeiro</span>
+    </a>
+    <a href="barbeiros.html" class="nav-item">
+      <span class="nav-icon">◉</span>
+      <span class="nav-label">Barbeiros</span>
+    </a>
+    <a href="agenda.html" class="nav-item active">
+      <span class="nav-icon">▦</span>
+      <span class="nav-label">Agenda</span>
+    </a>
+    <!-- NOVO LINK PARA CLIENTES -->
+    <a href="clientes.html" class="nav-item">
+      <span class="nav-icon">◈</span>
+      <span class="nav-label">Clientes</span>
+    </a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main id="app">
+    <div class="page-header">
+      <div class="page-title">Agenda do Sistema</div>
+      <p class="page-subtitle">Painel de controle de cortes e horários marcados</p>
+    </div>
+
+    <div class="grid-2">
+      <!-- CALENDÁRIO -->
+      <div class="card">
+        <div class="card-title">Calendário de Atendimentos</div>
+        <div class="cal-nav">
+          <button class="cal-btn" onclick="mudarMes(-1)">‹</button>
+          <div class="cal-title" id="cal-month-label">—</div>
+          <button class="cal-btn" onclick="mudarMes(1)">›</button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+
+      <!-- DETALHES DO DIA -->
+      <div class="card">
+        <div class="card-title">
+          ▦ Compromissos — <span id="selected-date-label" style="color: var(--texto); font-weight: 400; text-transform: none;">Selecione uma data</span>
+        </div>
+
+        <span class="section-label">Status dos Horários:</span>
+        <div class="time-status-grid" id="timeStatusGrid"></div>
+
+        <div class="divider"></div>
+
+        <span class="section-label">Cortes e Serviços Marcados:</span>
+        <div id="dia-agendamentos">
+          <div class="empty-state">
+            <div class="icon">✦</div>
+            <p>Selecione um dia no calendário para visualizar os agendamentos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // =============================================
+    // FUNCIONALIDADES — NÃO ALTERADAS
+    // =============================================
+
+    const CONSULTA_URL = 'https://n8n-n8n.njqmsx.easypanel.host/webhook/consultar-disponibilidade';
+    const DELETAR_URL = 'https://n8n-n8n.njqmsx.easypanel.host/webhook/deletar-agendamento';
+
+    const HORARIOS_PADRAO = [
+      '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+      '11:00', '11:30', '13:00', '13:30', '14:00', '14:30',
+      '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+      '18:00', '18:30', '19:00'
+    ];
+
+    let STATE = {
+      calMes: new Date().getMonth(),
+      calAno: new Date().getFullYear(),
+      diaSelecionado: null,
+      agendamentosAtuais: []
+    };
+
+    function showLoader(msg = 'CONSULTANDO AGENDA...') {
+      document.getElementById('loader').classList.add('visible');
+      document.querySelector('.loader-text').textContent = msg;
+    }
+
+    function hideLoader() {
+      document.getElementById('loader').classList.remove('visible');
+    }
+
+    function toast(msg, type = 'info', duration = 3000) {
+      const container = document.getElementById('toast-container');
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.innerHTML = `<span class="toast-msg">${msg}</span>`;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), duration);
+    }
+
+    function formatDataFormatada(dataISO) {
+      if (!dataISO) return '—';
+      const parts = dataISO.split('-');
+      if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      return dataISO;
+    }
+
+    function renderCalendario() {
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+      document.getElementById('cal-month-label').textContent = `${meses[STATE.calMes]} ${STATE.calAno}`;
+
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+
+      dias.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-header';
+        el.textContent = d;
+        grid.appendChild(el);
+      });
+
+      const primeiroDia = new Date(STATE.calAno, STATE.calMes, 1).getDay();
+      const totalDias = new Date(STATE.calAno, STATE.calMes + 1, 0).getDate();
+      const hoje = new Date();
+
+      for (let i = 0; i < primeiroDia; i++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day empty';
+        grid.appendChild(el);
+      }
+
+      for (let dia = 1; dia <= totalDias; dia++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day';
+        el.textContent = dia;
+
+        const diaStr = String(dia).padStart(2, '0');
+        const mesStr = String(STATE.calMes + 1).padStart(2, '0');
+        const dataStr = `${STATE.calAno}-${mesStr}-${diaStr}`;
+        el.dataset.date = dataStr;
+
+        if (dia === hoje.getDate() && STATE.calMes === hoje.getMonth() && STATE.calAno === hoje.getFullYear()) {
+          el.classList.add('today');
+        }
+
+        if (STATE.diaSelecionado === dataStr) {
+          el.classList.add('selected');
+        }
+
+        el.onclick = () => selecionarDia(dataStr);
+        grid.appendChild(el);
+      }
+    }
+
+    function mudarMes(delta) {
+      STATE.calMes += delta;
+      if (STATE.calMes > 11) { STATE.calMes = 0; STATE.calAno++; }
+      if (STATE.calMes < 0) { STATE.calMes = 11; STATE.calAno--; }
+      renderCalendario();
+    }
+
+    async function selecionarDia(dataStr) {
+      STATE.diaSelecionado = dataStr;
+
+      document.querySelectorAll('.cal-day').forEach(el => {
+        el.classList.toggle('selected', el.dataset.date === dataStr);
+      });
+
+      document.getElementById('selected-date-label').textContent = formatDataFormatada(dataStr);
+
+      showLoader('BUSCANDO CORTES MARCADOS...');
+
+      try {
+        const response = await fetch(CONSULTA_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ "ag-data": dataStr })
+        });
+
+        if (!response.ok) throw new Error(`Status ${response.status}`);
+
+        const dados = await response.json();
+        const ocupados = dados.ocupados || [];
+        const agendamentos = dados.agendamentos || [];
+
+        STATE.agendamentosAtuais = agendamentos;
+
+        renderDetalhesDia(ocupados, agendamentos);
+        toast('Agenda do dia atualizada!', 'success');
+      } catch (err) {
+        console.error('Erro ao consultar agenda:', err);
+        STATE.agendamentosAtuais = [];
+        renderDetalhesDia([], []);
+        toast('Erro ao buscar dados do dia.', 'error');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function renderDetalhesDia(ocupados = [], agendamentos = []) {
+      const statusGrid = document.getElementById('timeStatusGrid');
+      const containerList = document.getElementById('dia-agendamentos');
+
+      statusGrid.innerHTML = '';
+      containerList.innerHTML = '';
+
+      HORARIOS_PADRAO.forEach(hora => {
+        const estaOcupado = ocupados.includes(hora) || agendamentos.some(a => (a['ag-hora'] || a.hora) === hora);
+        const badge = document.createElement('div');
+        badge.className = `time-badge ${estaOcupado ? 'busy' : 'free'}`;
+        badge.innerText = `${hora} • ${estaOcupado ? 'Ocupado' : 'Livre'}`;
+        statusGrid.appendChild(badge);
+      });
+
+      if (agendamentos.length > 0) {
+        agendamentos.forEach((ag, index) => {
+          const nome = ag['ag-nome'] || ag.nome || ag.nome_cliente || 'Cliente Agendado';
+          const hora = ag['ag-hora'] || ag.hora || '--:--';
+          const servico = ag['ag-servico'] || ag.servico || 'Corte Tradicional';
+          const whatsapp = ag['ag-whatsapp'] || ag.whatsapp || '';
+          const cleanZap = whatsapp.replace(/\D/g, '');
+
+          const el = document.createElement('div');
+          el.className = 'agendamento-item';
+          el.innerHTML = `
+            <div>
+              <div class="cliente">${nome}</div>
+              <div class="servico"><strong>Serviço:</strong> ${servico}</div>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:4px;">
+                ${whatsapp ? `<a href="https://wa.me/${cleanZap}" target="_blank" class="whatsapp-link">💬 ${whatsapp}</a>` : ''}
+                <button class="btn-deletar" onclick="deletarAgendamento(${index})">🗑️ Excluir</button>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div class="hora">${hora} hs</div>
+              <span class="status-badge confirmado">Confirmado</span>
+            </div>
+          `;
+          containerList.appendChild(el);
+        });
+      } else if (ocupados.length > 0) {
+        ocupados.forEach(hora => {
+          const el = document.createElement('div');
+          el.className = 'agendamento-item';
+          el.innerHTML = `
+            <div>
+              <div class="cliente">Horário Reservado</div>
+              <div class="servico">Agendamento registrado no sistema.</div>
+              <button class="btn-deletar" onclick="deletarAgendamentoPorHora('${hora}')">🗑️ Excluir</button>
+            </div>
+            <div style="text-align: right;">
+              <div class="hora">${hora} hs</div>
+              <span class="status-badge reservado">Reservado</span>
+            </div>
+          `;
+          containerList.appendChild(el);
+        });
+      } else {
+        containerList.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">✦</div>
+            <p>Nenhum corte ou horário reservado para este dia.</p>
+          </div>`;
+      }
+    }
+
+    async function deletarAgendamento(index) {
+      const ag = STATE.agendamentosAtuais[index];
+      if (!ag) return;
+
+      const nome = ag['ag-nome'] || ag.nome || ag.nome_cliente || 'Cliente';
+      if (!confirm(`Tem certeza de que deseja excluir o agendamento de "${nome}"?`)) return;
+
+      showLoader('DELETANDO AGENDAMENTO...');
+
+      try {
+        const payload = {
+          "ag-id": ag.id || ag['ag-id'] || '',
+          "ag-data": STATE.diaSelecionado,
+          "ag-hora": ag['ag-hora'] || ag.hora || '',
+          "ag-nome": nome,
+          "ag-servico": ag['ag-servico'] || ag.servico || ''
+        };
+
+        const response = await fetch(DELETAR_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          toast('Agendamento excluído com sucesso!', 'success');
+          selecionarDia(STATE.diaSelecionado);
+        } else {
+          toast('Erro ao excluir agendamento.', 'error');
+        }
+      } catch (err) {
+        console.error('Erro ao deletar:', err);
+        toast('Erro de conexão ao tentar excluir.', 'error');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    async function deletarAgendamentoPorHora(hora) {
+      if (!confirm(`Tem certeza de que deseja excluir o agendamento das ${hora}?`)) return;
+
+      showLoader('DELETANDO AGENDAMENTO...');
+
+      try {
+        const payload = {
+          "ag-data": STATE.diaSelecionado,
+          "ag-hora": hora
+        };
+
+        const response = await fetch(DELETAR_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          toast('Agendamento excluído com sucesso!', 'success');
+          selecionarDia(STATE.diaSelecionado);
+        } else {
+          toast('Erro ao excluir agendamento.', 'error');
+        }
+      } catch (err) {
+        console.error('Erro ao deletar:', err);
+        toast('Erro de conexão ao tentar excluir.', 'error');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    // ================= MENU HAMBÚRGUER =================
+    function toggleMenu() {
+      const hamburger = document.getElementById('hamburger-btn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      hamburger.classList.toggle('active');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+      document.body.style.overflow = hamburger.classList.contains('active') ? 'hidden' : '';
+    }
+
+    function closeMenu() {
+      const hamburger = document.getElementById('hamburger-btn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      hamburger.classList.remove('active');
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCalendario();
+
+      const hoje = new Date();
+      const diaStr = String(hoje.getDate()).padStart(2, '0');
+      const mesStr = String(hoje.getMonth() + 1).padStart(2, '0');
+      const anoStr = hoje.getFullYear();
+
+      selecionarDia(`${anoStr}-${mesStr}-${diaStr}`);
+
+      // Menu hambúrguer e overlay
+      const hamburger = document.getElementById('hamburger-btn');
+      const overlay = document.getElementById('sidebar-overlay');
+      const navItems = document.querySelectorAll('.nav-item');
+
+      hamburger.addEventListener('click', toggleMenu);
+      overlay.addEventListener('click', closeMenu);
+
+      // Fecha o menu quando clica em um item da navegação
+      navItems.forEach(item => {
+        item.addEventListener('click', closeMenu);
+      });
+
+      // Fecha o menu quando redimensiona a janela (passa de mobile para desktop)
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 880) {
+          closeMenu();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

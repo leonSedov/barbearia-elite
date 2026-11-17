@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELITTE BARBER — Tarefas Atrasadas</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="image.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="image.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="image.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Elitte" />
+  <meta name="theme-color" content="#141414" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+<style>
+    :root {
+        --tinta: #141414; --tinta-suave: #2a2927;
+        --pedra: #e7e6df; --pedra-card: #f8f7f3;
+        --latao: #b3aa98; --latao-escuro: #6c6456;
+        --bordo: #8c3a32; --bordo-escuro: #6b2a24;
+        --navalha: #3d5a4b; --texto: #151515; --texto-suave: #6a6761; --linha: #d6d4cc;
+        --perigo: #a33b30; --info: #4d5b69; --whatsapp: #25D366;
+        --claro: #f2f1ec;
+        --fonte-titulo: 'Cormorant Garamond', 'Times New Roman', serif;
+        --fonte-cartaz: 'Jost', 'Inter', sans-serif;
+        --fonte-corpo: 'Jost', 'Inter', sans-serif;
+        --fonte-dados: 'Jost', 'Inter', sans-serif;
+        --radius: 4px; --radius-peq: 3px;
+        --sombra: 0 12px 30px -18px rgba(20,20,20,0.30);
+        --sombra-forte: 0 26px 60px -24px rgba(20,20,20,0.45);
+        --faixa: linear-gradient(90deg, #141414, #141414);
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; } }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--pedra); color: var(--texto); font-family: var(--fonte-corpo); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--pedra); } ::-webkit-scrollbar-thumb { background: var(--latao); border-radius: 3px; }
+    .faixa-topo { height: 5px; width: 100%; background: var(--faixa); background-size: 70px 70px; animation: girarFaixa 3.2s linear infinite; }
+    @keyframes girarFaixa { from { background-position: 0 0; } to { background-position: 70px 0; } }
+
+    #login-overlay { position: fixed; inset: 0; background: rgba(20,20,20, 0.95); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 99999; padding: 20px; }
+    #login-overlay.active { display: flex; }
+    .login-box { background: var(--pedra-card); border-radius: var(--radius); padding: 40px 36px; max-width: 420px; width: 100%; box-shadow: var(--sombra-forte); text-align: center; animation: modalEntrar 0.4s ease; border-top: 5px solid var(--latao); }
+    .login-box h1 { font-family: var(--fonte-cartaz); font-size: 1.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--tinta); margin-bottom: 6px; }
+    .login-box .sub { color: var(--texto-suave); font-size: 0.9rem; margin-bottom: 24px; border-bottom: 1px solid var(--linha); padding-bottom: 16px; }
+    .login-box .login-icon { font-size: 2.8rem; margin-bottom: 10px; color: var(--latao); }
+    .login-box input { width: 100%; padding: 14px 16px; border: 2px solid var(--linha); border-radius: var(--radius-peq); font-size: 1rem; font-family: var(--fonte-corpo); background: var(--pedra); color: var(--texto); transition: border-color 0.2s; margin-bottom: 16px; text-align: center; letter-spacing: 2px; }
+    .login-box input:focus { outline: none; border-color: var(--latao); }
+    .login-box .btn-entrar { width: 100%; padding: 14px; background: var(--tinta); color: #fff; border: none; border-radius: var(--radius-peq); font-family: var(--fonte-cartaz); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; transition: background 0.15s; }
+    .login-box .btn-entrar:hover { background: var(--latao-escuro); }
+    .login-box .erro { color: var(--perigo); font-size: 0.85rem; margin-top: 12px; display: none; }
+    .login-box .erro.visible { display: block; }
+
+    #sidebar { position: fixed; left: 0; top: 5px; bottom: 0; width: 72px; background: var(--tinta); border-right: 1px solid rgba(181,171,152,0.25); display: flex; flex-direction: column; align-items: center; padding: 22px 0; z-index: 100; transition: width .3s ease; overflow: hidden; }
+    #sidebar:hover { width: 220px; }
+    .sidebar-logo { font-family: var(--fonte-cartaz); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pedra); white-space: nowrap; overflow: hidden; width: 100%; text-align: center; padding: 0 16px; margin-bottom: 18px; }
+    .sidebar-logo span:last-child { color: var(--latao); opacity: 0; transition: opacity .2s; }
+    #sidebar:hover .sidebar-logo span:last-child { opacity: 1; }
+    .sidebar-logo-icon { min-width: 40px; display: inline-block; }
+    .sidebar-perfil { display: flex; align-items: center; gap: 12px; width: 100%; padding: 0 16px 18px; margin-bottom: 8px; border-bottom: 1px solid rgba(181,171,152,0.2); white-space: nowrap; overflow: hidden; }
+    .sidebar-perfil__foto { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--latao); background: var(--tinta-suave); }
+    .sidebar-perfil__nome { font-family: var(--fonte-cartaz); font-size: 0.85rem; color: var(--pedra); opacity: 0; transition: opacity .2s; }
+    #sidebar:hover .sidebar-perfil__nome { opacity: 1; }
+    .nav-item { width: 100%; display: flex; align-items: center; gap: 14px; padding: 13px 16px; transition: background .15s, border-color .15s; border-left: 3px solid transparent; white-space: nowrap; }
+    .nav-item:hover { background: rgba(181,171,152,0.1); border-left-color: var(--latao-escuro); }
+    .nav-item.active { background: rgba(181,171,152,0.16); border-left-color: var(--latao); }
+    .nav-item.active .nav-icon, .nav-item.active .nav-label { color: var(--latao); }
+    .nav-icon { min-width: 40px; text-align: center; color: #9a968c; font-size: 1.05rem; }
+    .nav-label { font-size: 0.82rem; font-weight: 500; color: #9a968c; opacity: 0; transition: opacity .2s; }
+    #sidebar:hover .nav-label { opacity: 1; }
+
+    #app { margin-left: 72px; min-height: 100vh; padding: 36px 40px 60px; max-width: 1100px; }
+    .page-header { padding: 0 0 24px; border-bottom: 2px solid var(--linha); margin-bottom: 28px; position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .page-title { font-family: var(--fonte-cartaz); font-size: 1.9rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--tinta); margin-bottom: 4px; }
+    .page-subtitle { color: var(--texto-suave); font-size: 0.88rem; }
+    .page-subtitle strong { color: var(--tinta); }
+    .card { background: var(--pedra-card); border: 1px solid var(--linha); border-radius: var(--radius); padding: 24px; box-shadow: var(--sombra); position: relative; overflow: hidden; }
+    .card--faixa::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--faixa); background-size: 48px 48px; }
+    .card-title { font-family: var(--fonte-cartaz); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; color: var(--tinta); text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+    .card-title::after { content: ""; flex: 1; height: 1px; background: var(--linha); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .metric-card { text-align: center; }
+    .metric-card--perigo .metric-value { color: var(--perigo); }
+    .metric-value { font-family: var(--fonte-dados); font-size: 2.2rem; font-weight: 600; color: var(--latao-escuro); line-height: 1; }
+    .metric-label { font-family: var(--fonte-cartaz); font-size: 0.7rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 8px; }
+
+    .divider { height: 1px; background: var(--linha); margin: 20px 0; }
+    .section-label { font-family: var(--fonte-cartaz); font-size: 0.75rem; font-weight: 600; color: var(--tinta); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; display: block; }
+
+    /* ============ TAREFAS ATRASADAS — CARDS ============ */
+    .agendamento-item { border: 1px solid var(--linha); border-radius: var(--radius); padding: 15px 16px; margin-bottom: 12px; background: var(--pedra-card); display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: border-color .15s, box-shadow .15s, background .15s; }
+    .agendamento-item:hover { border-color: var(--latao); box-shadow: var(--sombra); }
+    .agendamento-item.pendente {
+        border-color: var(--perigo);
+        background: #fdf5f4;
+        border-left: 5px solid var(--perigo);
+        box-shadow: 0 2px 8px -4px rgba(168, 51, 42, 0.25);
+    }
+    .agendamento-item.pendente:hover {
+        border-color: var(--perigo);
+        background: #fbeae8;
+    }
+    .agendamento-item .hora { font-family: var(--fonte-dados); font-weight: 600; color: var(--latao-escuro); font-size: 1rem; white-space: nowrap; }
+    .agendamento-item .cliente { font-family: var(--fonte-cartaz); font-size: 0.98rem; color: var(--tinta); }
+    .agendamento-item .servico { color: var(--texto-suave); font-size: 0.82rem; margin-top: 3px; }
+    .agendamento-item .preco { color: var(--perigo); font-family: var(--fonte-dados); font-size: 0.85rem; margin-top: 4px; font-weight: 700; }
+    .acoes-agendamento { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+    .whatsapp-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--whatsapp); color: #fff; padding: 6px 12px; border-radius: var(--radius-peq); font-size: 0.75rem; font-weight: 700; transition: transform .15s, background .15s; border: none; }
+    .whatsapp-btn:hover { transform: scale(1.03); background: #1eb85a; }
+    .whatsapp-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .btn-pagar { display: inline-flex; align-items: center; gap: 6px; background: var(--navalha); border: 1px solid var(--navalha); color: #fff; padding: 6px 12px; border-radius: var(--radius-peq); font-size: 0.72rem; font-weight: 700; transition: background .15s, transform .15s; }
+    .btn-pagar:hover { background: #24473d; transform: scale(1.03); }
+    .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #f0efe9; color: var(--latao-escuro); border: 1px solid var(--latao); }
+    .status-badge.pendente { background: #fde8e6; color: var(--perigo); border-color: var(--perigo); }
+
+    /* ============ AGRUPAMENTO POR DIA ============ */
+    .tarefas-lista { display: flex; flex-direction: column; gap: 0; }
+    .dia-grupo { margin-bottom: 30px; }
+    .dia-grupo:last-child { margin-bottom: 0; }
+    .dia-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 16px; background: var(--tinta);
+        border-radius: var(--radius-peq); margin-bottom: 14px;
+        flex-wrap: wrap; gap: 8px;
+        border-left: 4px solid var(--latao);
+    }
+    .dia-data {
+        font-family: var(--fonte-cartaz); font-size: 0.92rem;
+        color: var(--pedra); text-transform: uppercase; letter-spacing: 0.05em;
+        display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .dia-data .dias-atras {
+        font-family: var(--fonte-dados);
+        color: var(--latao);
+        font-size: 0.72rem;
+        padding: 2px 8px;
+        border: 1px solid rgba(181,171,152,0.4);
+        border-radius: 10px;
+        letter-spacing: 0;
+        text-transform: lowercase;
+    }
+    .dia-info {
+        font-family: var(--fonte-dados);
+        font-size: 0.82rem;
+        color: var(--latao);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* ============ ESTADO VAZIO ============ */
+    .vazio {
+        text-align: center;
+        padding: 60px 24px;
+        border: 2px dashed var(--navalha);
+        border-radius: var(--radius);
+        background: #eaf2ee;
+        color: var(--texto-suave);
+    }
+    .vazio .emoji { font-size: 3.2rem; display: block; margin-bottom: 16px; }
+    .vazio h3 {
+        font-family: var(--fonte-cartaz); font-size: 1.3rem;
+        color: var(--navalha); text-transform: uppercase;
+        letter-spacing: 0.04em; margin-bottom: 8px;
+    }
+    .vazio p { font-size: 0.9rem; line-height: 1.5; }
+    .vazio p strong { color: var(--navalha); }
+
+    /* ============ BARRA DE AÇÕES ============ */
+    .acoes-topo {
+        display: flex; gap: 12px; align-items: center;
+        flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .btn-acao {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--tinta); color: #fff;
+        border: none; padding: 10px 18px;
+        border-radius: var(--radius-peq);
+        font-family: var(--fonte-cartaz);
+        font-size: 0.82rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.05em;
+        transition: background .15s;
+    }
+    .btn-acao:hover { background: var(--latao-escuro); }
+    .btn-acao:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-acao--ghost { background: transparent; color: var(--tinta); border: 1px solid var(--linha); }
+    .btn-acao--ghost:hover { background: var(--pedra); color: var(--tinta); }
+
+    /* ============ MODAL ============ */
+    .loader-overlay { position: fixed; inset: 0; background: rgba(231,230,223,0.92); backdrop-filter: blur(6px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9000; }
+    .loader-overlay.visible { display: flex; }
+    .loader-ring { width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--linha); border-top-color: var(--tinta); animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { margin-top: 18px; font-family: var(--fonte-cartaz); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tinta); }
+    #toast-container { position: fixed; bottom: 28px; right: 28px; z-index: 9998; display: flex; flex-direction: column; gap: 10px; }
+    .toast { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--pedra-card); border: 1px solid var(--linha); border-radius: var(--radius); min-width: 300px; box-shadow: var(--sombra-forte); font-size: 0.88rem; color: var(--texto); }
+    .toast.success { border-color: var(--navalha); }
+    .toast.error { border-color: var(--perigo); }
+    .toast.info { border-color: var(--latao); }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(20,20,20, 0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: var(--pedra-card); border-radius: var(--radius); max-width: 520px; width: 100%; padding: 28px 32px; box-shadow: var(--sombra-forte); position: relative; max-height: 90vh; overflow-y: auto; animation: modalEntrar .25s ease; }
+    @keyframes modalEntrar { from { opacity: 0; transform: translateY(-20px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal h2 { font-family: var(--fonte-cartaz); font-size: 1.4rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--tinta); margin-bottom: 6px; }
+    .modal .modal-sub { color: var(--texto-suave); font-size: 0.85rem; margin-bottom: 20px; border-bottom: 1px solid var(--linha); padding-bottom: 14px; }
+    .modal .modal-sub strong { color: var(--tinta); }
+    .modal .btn-enviar { width: 100%; padding: 14px; background: var(--tinta); color: #fff; border: none; border-radius: var(--radius-peq); font-family: var(--fonte-cartaz); font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; transition: background .15s; margin-top: 6px; }
+    .modal .btn-enviar:hover { background: var(--latao-escuro); }
+    .modal .btn-fechar { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 1.6rem; line-height: 1; color: var(--texto-suave); transition: color .15s; padding: 0 6px; }
+    .modal .btn-fechar:hover { color: var(--tinta); }
+
+    .pagamento-info { background: var(--pedra); border: 1px solid var(--linha); border-radius: var(--radius-peq); padding: 14px 16px; margin-bottom: 18px; }
+    .pagamento-info__linha { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.88rem; border-bottom: 1px solid var(--linha); gap: 12px; }
+    .pagamento-info__linha:last-child { border-bottom: none; }
+    .pagamento-info__linha span:first-child { color: var(--texto-suave); white-space: nowrap; }
+    .pagamento-info__linha span:last-child { font-weight: 600; color: var(--tinta); text-align: right; word-break: break-word; }
+    .pagamento-info__valor { font-family: var(--fonte-dados); font-size: 1.3rem; color: var(--latao-escuro); font-weight: 700; }
+    .forma-pagamento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .forma-pagamento-opcao { border: 2px solid var(--linha); border-radius: var(--radius-peq); background: var(--pedra); padding: 14px 12px; text-align: center; cursor: pointer; transition: all .15s; position: relative; }
+    .forma-pagamento-opcao:hover { border-color: var(--latao); background: #f4f3ee; }
+    .forma-pagamento-opcao.selecionado { border-color: var(--tinta); background: #ecebe6; box-shadow: 0 0 0 1px var(--tinta); }
+    .forma-pagamento-opcao .icone { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+    .forma-pagamento-opcao .nome { font-family: var(--fonte-cartaz); font-size: 0.82rem; color: var(--tinta); font-weight: 500; }
+    .forma-pagamento-opcao .taxa { font-family: var(--fonte-dados); font-size: 0.65rem; color: var(--texto-suave); display: block; margin-top: 4px; }
+    .pagamento-resumo { background: var(--tinta); color: var(--pedra); border-radius: var(--radius-peq); padding: 14px 18px; margin-bottom: 16px; font-family: var(--fonte-cartaz); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.82rem; }
+    .pagamento-resumo__linha { display: flex; justify-content: space-between; padding: 4px 0; }
+    .pagamento-resumo__linha span:first-child { color: #9a968c; }
+    .pagamento-resumo__linha strong { font-family: var(--fonte-dados); color: var(--latao); }
+    .pagamento-resumo__linha.total { border-top: 1px solid rgba(181,171,152,0.3); margin-top: 6px; padding-top: 10px; font-size: 0.92rem; }
+    .pagamento-resumo__linha.total strong { font-size: 1.3rem; color: #fff; }
+
+    /* ============ MOBILE ============ */
+    .mobile-header { display: none; position: fixed; top: 5px; left: 0; right: 0; height: 60px; background: var(--tinta); border-bottom: 1px solid rgba(181,171,152,0.25); z-index: 101; align-items: center; padding: 0 16px; gap: 16px; }
+    .hamburger-btn { display: none; width: 40px; height: 40px; background: transparent; border: none; cursor: pointer; flex-direction: column; justify-content: center; align-items: center; gap: 5px; padding: 0; }
+    .hamburger-line { width: 24px; height: 2px; background: var(--latao); transition: all 0.3s ease; }
+    .hamburger-btn.active .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(8px, 8px); }
+    .hamburger-btn.active .hamburger-line:nth-child(2) { opacity: 0; }
+    .hamburger-btn.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
+    .mobile-logo { flex: 1; font-family: var(--fonte-cartaz); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pedra); white-space: nowrap; }
+    .mobile-logo-text { color: var(--latao); }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(20,20,20, 0.5); z-index: 99; backdrop-filter: blur(4px); }
+    .sidebar-overlay.active { display: block; }
+
+    /* Sino */
+    .notif-icon-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
+    .notif-bell-svg { width: 18px; height: 18px; display: block; stroke: currentColor; }
+    .notif-badge {
+        position: absolute; top: -5px; right: -7px;
+        background: var(--perigo); color: #fff;
+        font-family: var(--fonte-dados); font-size: 0.58rem; font-weight: 700;
+        min-width: 16px; height: 16px; padding: 0 4px;
+        border-radius: 8px; border: 1.5px solid var(--tinta);
+        display: flex; align-items: center; justify-content: center;
+        line-height: 1; z-index: 3;
+        animation: pulseBadge 1.6s ease-in-out infinite;
+    }
+    @keyframes pulseBadge {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(168,51,42,0.55); }
+        50%      { box-shadow: 0 0 0 5px rgba(168,51,42,0); }
+    }
+
+    @media (max-width: 880px) {
+        .mobile-header { display: flex; } .hamburger-btn { display: flex; }
+        #sidebar { position: fixed; left: 0; top: 65px; bottom: 0; width: 280px; height: auto; max-height: calc(100vh - 65px); overflow-y: auto; flex-direction: column; transform: translateX(-100%); transition: transform 0.3s ease; z-index: 102; }
+        #sidebar.active { transform: translateX(0); }
+        #sidebar:hover { width: 280px; }
+        .sidebar-logo span:last-child { opacity: 1; } .sidebar-perfil__nome { opacity: 1; } .nav-label { opacity: 1; }
+        #app { margin-left: 0; padding-top: 80px; }
+        .grid-2 { grid-template-columns: 1fr; }
+        .metric-card { padding: 16px; }
+        #toast-container { bottom: 16px; right: 16px; }
+        .toast { min-width: 250px; font-size: 0.75rem; }
+        .card { padding: 16px; }
+        .page-title { font-size: 1.5rem; } .page-subtitle { font-size: 0.8rem; }
+        .agendamento-item { padding: 12px; flex-direction: column; text-align: left; align-items: stretch; }
+        .agendamento-item .hora { font-size: 0.9rem; } .agendamento-item .cliente { font-size: 0.9rem; }
+        .dia-header { padding: 10px 12px; }
+        .dia-data { font-size: 0.82rem; }
+        .dia-info { font-size: 0.72rem; }
+        .modal { padding: 20px; max-width: 100%; }
+        .forma-pagamento-grid { grid-template-columns: 1fr; }
+        .acoes-topo { flex-direction: column; align-items: stretch; }
+        .btn-acao { justify-content: center; }
+    }
+    @media (max-width: 520px) {
+        #app { padding: 80px 16px 40px; }
+        .page-title { font-size: 1.2rem; } .page-subtitle { font-size: 0.75rem; }
+        .metric-value { font-size: 1.8rem; } .metric-label { font-size: 0.6rem; }
+        .card { padding: 12px; border-radius: 6px; }
+        .agendamento-item { margin-bottom: 10px; padding: 10px; }
+        .agendamento-item .hora { font-size: 0.85rem; } .agendamento-item .cliente { font-size: 0.85rem; } .agendamento-item .servico { font-size: 0.75rem; }
+        .whatsapp-btn, .btn-pagar { font-size: 0.68rem; padding: 6px 10px; }
+        .status-badge { font-size: 0.6rem; padding: 4px 10px; }
+        .toast { min-width: 200px; font-size: 0.7rem; padding: 10px 12px; }
+        .modal { padding: 16px; }
+        .dia-grupo { margin-bottom: 22px; }
+    }
+    @media (max-width: 380px) {
+        .mobile-logo { font-size: 0.8rem; }
+        #app { padding: 80px 12px 40px; }
+        .page-title { font-size: 1rem; }
+        .metric-value { font-size: 1.5rem; }
+    }
+
+    /* =========================================================
+       ELITTE BARBER — TEMA VISUAL
+       Preto + off-white acinzentado + serifada do logo.
+       Só aparência: funções e webhooks não foram alterados.
+    ========================================================= */
+    /* paleta: ver :root no início do <style> */
+    body { font-variant-numeric: lining-nums tabular-nums; }
+    ::selection { background: #141414; color: var(--claro); }
+    .faixa-topo { animation: none !important; background: #141414 !important; }
+    .card::before, .card--faixa::before, .edit-modal::before, .bloco-divisao::before, .wizard-caixa::before { height: 2px !important; }
+    .stat-card::before { height: 2px !important; background: linear-gradient(90deg, #141414, transparent) !important; }
+    .coroa { width: 26px; height: 20px; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+    /* Títulos na serifada do logo */
+    .page-title, .login-box h1, .modal h2, .perfil-info h1, .step__titulo, #step-sucesso h2,
+    .vazio h3, .secao-titulo, .edit-modal-title, .cal-title, .calendar-header span, .selected-date-title {
+        font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: 0.06em;
+    }
+    .page-title { font-size: 2.3rem; line-height: 1.05; }
+    .page-header { border-bottom: 1px solid rgba(20,20,20,0.55); }
+    .page-subtitle { letter-spacing: 0.02em; }
+    .card-title, .sidebar-card__titulo { letter-spacing: 0.2em; font-weight: 500; }
+    .kpi-title, .stat-label, .metric-label, .mini-kpi-title, .section-label, .bloco-divisao .rotulo,
+    .wizard__legenda, .cal-header, .weekday { letter-spacing: 0.16em; font-weight: 500; }
+    .metric-value, .kpi-value, .stat-value, .bloco-divisao .valor, .pagamento-info__valor,
+    .edit-total-box strong, .pagamento-resumo__linha.total strong, .mini-kpi-value {
+        font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: 0.01em;
+        font-variant-numeric: lining-nums tabular-nums;
+    }
+    .metric-value { font-size: 2.6rem; color: var(--texto); }
+    .kpi-value { font-size: 1.85rem; }
+    .mini-kpi-value { font-size: 1.3rem; }
+    .stat-value { font-size: 2rem; color: var(--texto); }
+    .card:hover { border-color: #a9a69e; }
+
+    /* Botões */
+    .login-box .btn-entrar, .modal .btn-enviar, .btn-cta, .btn-agendar-linha, .btn-acao, .btn,
+    .btn-primary, .btn-outline, .btn-cancel, .btn-atalho, .btn-upload, .btn-mini {
+        letter-spacing: 0.16em; font-weight: 500;
+    }
+    .cliente-item .cliente-badge, .btn-recargar { background: #141414 !important; color: var(--claro) !important; }
+    .btn-refresh:hover, .btn-ver-img:hover { background: #141414; border-color: #141414; color: var(--claro); }
+
+    /* Sidebar */
+    #sidebar { background: #141414; border-right: 1px solid rgba(242,241,236,0.08); }
+    .sidebar-logo {
+        display: flex; align-items: center; justify-content: flex-start; gap: 6px;
+        font-family: var(--fonte-titulo); font-size: 1.35rem; font-weight: 600; letter-spacing: 0.16em;
+        color: var(--claro); text-align: left; padding: 0 16px; margin-bottom: 26px;
+    }
+    .sidebar-logo-icon { min-width: 40px; display: inline-flex !important; justify-content: center; color: var(--claro); }
+    .sidebar-logo span:last-child { color: var(--claro); }
+    .sidebar-perfil { border-bottom-color: rgba(242,241,236,0.10) !important; }
+    .sidebar-perfil__foto { border: 1px solid rgba(242,241,236,0.55) !important; filter: grayscale(1); }
+    .sidebar-perfil__nome { font-family: var(--fonte-titulo); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.04em; color: var(--claro); }
+    .nav-icon, .nav-label { color: #9a968c; }
+    .nav-label { letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; }
+    .nav-item:hover { background: rgba(242,241,236,0.05); border-left-color: rgba(242,241,236,0.35); }
+    .nav-item.active { background: rgba(242,241,236,0.08); border-left-color: var(--claro); }
+    .nav-item.active .nav-icon, .nav-item.active .nav-label { color: var(--claro); }
+
+    /* Cabeçalho mobile */
+    .mobile-header { background: #141414; border-bottom: 1px solid rgba(242,241,236,0.08); }
+    .hamburger-line { background: var(--claro); }
+    .mobile-logo {
+        display: flex; align-items: center; gap: 8px; font-family: var(--fonte-titulo);
+        font-size: 1.25rem; font-weight: 600; letter-spacing: 0.16em; color: var(--claro);
+    }
+    .mobile-logo .coroa { width: 22px; height: 17px; }
+    .mobile-logo-text {
+        font-family: var(--fonte-cartaz); font-size: 0.58rem; font-weight: 400;
+        letter-spacing: 0.42em; color: var(--latao); margin-left: 2px;
+    }
+    .notif-bell-mobile { color: var(--claro) !important; }
+    .notif-badge { border-color: #141414 !important; }
+
+    /* Login */
+    #login-overlay { background: rgba(14,14,14,0.97) !important; }
+    .login-box { border-top: none !important; background: var(--pedra) !important; padding: 46px 38px 36px !important; }
+    .login-box .login-icon { color: var(--texto); margin-bottom: 6px; line-height: 1; }
+    .login-box .login-icon .coroa { width: 46px; height: 35px; }
+    .login-box h1 { font-size: 2.7rem; letter-spacing: 0.1em; margin-bottom: 0; line-height: 1; }
+    .login-marca {
+        font-family: var(--fonte-cartaz); font-size: 0.72rem; letter-spacing: 0.5em; padding-left: 0.5em;
+        text-transform: uppercase; color: var(--texto); margin: 8px 0 16px;
+    }
+    .login-box input { background: var(--pedra-card); }
+
+    /* Loader */
+    .loader-ring { border-top-color: #141414 !important; }
+    .loader-text { letter-spacing: 0.3em; }
+</style>
+</head>
+<body>
+
+<div id="login-overlay" class="active">
+    <div class="login-box">
+        <div class="login-icon"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg></div>
+        <h1>Elitte</h1>
+        <div class="login-marca">Barber</div>
+        <div class="sub">Tarefas Atrasadas — Anderson Lucas</div>
+        <input type="password" id="senha-input" placeholder="Digite a senha" autocomplete="off">
+        <button class="btn-entrar" id="btn-login">Entrar</button>
+        <div class="erro" id="login-erro">Senha incorreta. Tente novamente.</div>
+    </div>
+</div>
+
+<div class="faixa-topo" aria-hidden="true"></div>
+
+<div class="mobile-header">
+  <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu" aria-expanded="false">
+    <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>
+  </button>
+  <div class="mobile-logo"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg><span>Elitte</span><span class="mobile-logo-text">Barber</span></div>
+  <span style="font-family: var(--fonte-cartaz); font-size: 0.62rem; color: var(--latao); letter-spacing: 0.22em; text-transform: uppercase;">Atrasadas</span>
+</div>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="loader-overlay" id="loader"><div class="loader-ring"></div><div class="loader-text">CARREGANDO TAREFAS...</div></div>
+<div id="toast-container"></div>
+
+<nav id="sidebar">
+    <div class="sidebar-logo"><span class="sidebar-logo-icon"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg></span><span>Elitte</span></div>
+    <div class="sidebar-perfil">
+        <img src="anderson.png" alt="Anderson Lucas" class="sidebar-perfil__foto" onerror="this.style.display='none'">
+        <span class="sidebar-perfil__nome">Anderson Lucas</span>
+    </div>
+
+    <a href="anderson.html" class="nav-item"><span class="nav-icon">▦</span><span class="nav-label">Agenda</span></a>
+    <a href="#" class="nav-item active notif-nav" id="notif-nav" onclick="event.preventDefault(); recarregarTarefas();">
+        <span class="nav-icon">
+            <span class="notif-icon-wrap">
+                <svg class="notif-bell-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+            </span>
+        </span>
+        <span class="nav-label">Tarefas Atrasadas</span>
+    </a>
+
+    <a href="clientes-barbeiro.html" class="nav-item"><span class="nav-icon">◈</span><span class="nav-label">Clientes</span></a>
+    <a href="caixa_barbeiros.html" class="nav-item"><span class="nav-icon">◎</span><span class="nav-label">Financeiro</span></a>
+</nav>
+
+<main id="app" style="display:none;">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Tarefas Atrasadas</div>
+            <div class="page-subtitle">
+                Agendamentos de <strong id="sub-mes">—</strong> que já passaram e que ainda <strong>não constam como pago</strong>
+            </div>
+        </div>
+        <button type="button" class="btn-acao btn-acao--ghost" id="btnRecarregar">🔄 Recarregar</button>
+    </div>
+
+    <div class="grid-2" style="margin-bottom: 22px;">
+        <div class="card metric-card metric-card--perigo">
+            <div class="metric-value" id="metric-qtd">0</div>
+            <div class="metric-label">Tarefas pendentes no mês</div>
+        </div>
+        <div class="card metric-card">
+            <div class="metric-value" id="metric-valor">R$ 0</div>
+            <div class="metric-label">Valor total pendente no mês</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Pendências por dia — <span id="titulo-mes" style="color: var(--tinta); text-transform: none;">—</span></div>
+        <div class="tarefas-lista" id="tarefasLista">
+            <div style="text-align:center; color: var(--texto-suave); padding: 40px;">
+                Carregando tarefas...
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="modal-overlay" id="modalPagamento">
+    <div class="modal">
+        <button class="btn-fechar" id="btnFecharPagamento">&times;</button>
+        <h2>Confirmar Pagamento</h2>
+        <div class="modal-sub">
+            <strong id="pagClienteNome">—</strong> · <span id="pagDataHora">—</span>
+        </div>
+        <div class="pagamento-info" id="pagInfoCorte"></div>
+        <label style="font-family: var(--fonte-cartaz); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--tinta); display: block; margin-bottom: 8px;">
+            Forma de Pagamento
+        </label>
+        <div class="forma-pagamento-grid" id="formaPagamentoGrid">
+            <div class="forma-pagamento-opcao" data-forma="Pix">
+                <span class="icone">⚡</span><span class="nome">Pix</span><span class="taxa">Sem taxa</span>
+            </div>
+            <div class="forma-pagamento-opcao" data-forma="Dinheiro">
+                <span class="icone">💵</span><span class="nome">Dinheiro</span><span class="taxa">Sem taxa</span>
+            </div>
+            <div class="forma-pagamento-opcao" data-forma="Cartão de Débito">
+                <span class="icone">💳</span><span class="nome">Cartão de Débito</span><span class="taxa">Taxa 0,89%</span>
+            </div>
+            <div class="forma-pagamento-opcao" data-forma="Cartão de Crédito">
+                <span class="icone">💳</span><span class="nome">Cartão de Crédito</span><span class="taxa">Taxa 3,09%</span>
+            </div>
+        </div>
+        <div class="pagamento-resumo" id="pagResumo">
+            <div class="pagamento-resumo__linha"><span>Valor Bruto</span><strong id="resumoBruto">R$ 0,00</strong></div>
+            <div class="pagamento-resumo__linha" id="linhaTaxa" style="display:none;"><span>Taxa</span><strong id="resumoTaxa">- R$ 0,00</strong></div>
+            <div class="pagamento-resumo__linha total"><span>Valor no Caixa</span><strong id="resumoLiquido">R$ 0,00</strong></div>
+        </div>
+        <button class="btn-enviar" id="btnConfirmarPagamento">Confirmar Pagamento</button>
+    </div>
+</div>
+
+<script>
+    // ================= HELPERS SEGUROS =================
+    function on(id, evt, fn) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener(evt, fn);
+        return el;
+    }
+
+    // ================= CONFIGURAÇÕES =================
+    const BARBEIRO_ID = 'anderson';
+    const CONSULTA_URL = 'https://n8n-n8n.njqmsx.easypanel.host/webhook/consultar-disponibilidade';
+    const WEBHOOK_PAGAMENTO = 'https://n8n-n8n.njqmsx.easypanel.host/webhook/confirmar-pagamento';
+    const CAIXA_OBTER_URL   = 'https://n8n-n8n.njqmsx.easypanel.host/webhook/caixa-obter';
+    const NOTIF_CACHE_KEY = 'notif_atrasadas_cache_anderson';
+
+    const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+    const PRECOS_SERVICOS = {
+        'Alinhamento de Fios': 140, 'Cabelo e Barba': 120, 'Cabelo e Hidratação Capilar': 105,
+        'Cabelo e Sobrancelhas': 85, 'Corte de Cabelo': 65, 'Hidratação Capilar': 40,
+        'Sobrancelhas': 20, 'Barboterapia': 60, 'Limpeza de Pele': 50, 'Acabamento de Cabelo': 25
+    };
+    const TAXAS_CARTAO = {
+        'Cartão de Crédito': 0.0309,
+        'Cartão de Débito': 0.0089
+    };
+
+    let STATE = {
+        tarefas: [],
+        taskAtual: null,
+        formaPagamentoSelecionada: null,
+        carregando: false
+    };
+
+    // ================= SISTEMA DE SENHA =================
+    const SENHA_CORRETA = '2027anderson';
+    const STORAGE_KEY = 'auth_data_anderson';
+
+    function getAuthData() {
+        try { const raw = localStorage.getItem(STORAGE_KEY); if (!raw) return null; return JSON.parse(raw); } catch { return null; }
+    }
+    function setAuthData() {
+        const hoje = new Date();
+        const dataStr = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0') + '-' + String(hoje.getDate()).padStart(2,'0');
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: dataStr }));
+    }
+    function precisaAutenticar() {
+        const auth = getAuthData();
+        if (!auth) return true;
+        const hoje = new Date();
+        const diaAtual = hoje.getDate(), mesAtual = hoje.getMonth() + 1, anoAtual = hoje.getFullYear();
+        if (diaAtual === 8) {
+            if (!auth.data) return true;
+            const partes = auth.data.split('-');
+            if (partes.length !== 3) return true;
+            if (parseInt(partes[0],10) !== anoAtual || parseInt(partes[1],10) !== mesAtual || parseInt(partes[2],10) !== 8) return true;
+            return false;
+        } else {
+            return !auth.data;
+        }
+    }
+    function autenticar(senha) {
+        if (senha === SENHA_CORRETA) {
+            setAuthData();
+            document.getElementById('login-overlay').classList.remove('active');
+            document.getElementById('app').style.display = 'block';
+            iniciarAplicacao();
+            return true;
+        } else {
+            const erro = document.getElementById('login-erro');
+            erro.classList.add('visible');
+            setTimeout(() => erro.classList.remove('visible'), 3000);
+            return false;
+        }
+    }
+    on('btn-login', 'click', function() {
+        const input = document.getElementById('senha-input');
+        autenticar(input.value);
+        input.value = '';
+    });
+    on('senha-input', 'keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('btn-login').click();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        if (precisaAutenticar()) {
+            document.getElementById('login-overlay').classList.add('active');
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('senha-input').focus();
+        } else {
+            document.getElementById('login-overlay').classList.remove('active');
+            document.getElementById('app').style.display = 'block';
+            iniciarAplicacao();
+        }
+    });
+
+    // ================= HELPERS =================
+    function showLoader(msg = 'CARREGANDO TAREFAS...') {
+        const loader = document.getElementById('loader');
+        if (!loader) return;
+        loader.classList.add('visible');
+        const txt = loader.querySelector('.loader-text');
+        if (txt) txt.textContent = msg;
+    }
+    function hideLoader() {
+        const loader = document.getElementById('loader');
+        if (loader) loader.classList.remove('visible');
+    }
+    function toast(msg, type = 'info', duration = 3000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<span class="toast-msg">${msg}</span>`;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), duration);
+    }
+    function formatDataFormatada(dataISO) {
+        if (!dataISO) return '—';
+        const partes = dataISO.split('-');
+        if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        return dataISO;
+    }
+    function formatMoeda(v) {
+        return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    }
+    function getMesAtualNome() { return MESES[new Date().getMonth()]; }
+    function getMesAtualLabel() { return `${MESES[new Date().getMonth()]} de ${new Date().getFullYear()}`; }
+    function diasAtras(dataStr) {
+        const hoje = new Date(); hoje.setHours(0,0,0,0);
+        const [a,m,d] = dataStr.split('-').map(Number);
+        const dt = new Date(a, m-1, d);
+        const diff = Math.floor((hoje - dt) / (1000*60*60*24));
+        if (diff === 0) return 'hoje';
+        if (diff === 1) return 'ontem';
+        return `há ${diff} dias`;
+    }
+    function invalidarNotifCache() {
+        try { localStorage.removeItem(NOTIF_CACHE_KEY); } catch {}
+    }
+
+    function extrairWhatsApp(ag) {
+        const direto = ag['ag-whatsapp'] || ag.whatsapp || ag['numero'] || ag['telefone'] || ag['celular'] || '';
+        if (direto && /\d{8,}/.test(String(direto).replace(/\D/g, ''))) return String(direto).trim();
+        const textos = Object.values(ag).filter(Boolean).map(String);
+        for (const texto of textos) {
+            const m = texto.match(/whats?app\s*:?\s*([\d\s()\-+.]{8,})/i);
+            if (m) return m[1].trim();
+        }
+        for (const texto of textos) {
+            const m = texto.match(/\b(?:zap|telefone|tel|fone|celular|contato)\s*:?\s*([\d\s()\-+.]{8,})/i);
+            if (m) return m[1].trim();
+        }
+        const textoTotal = textos.join(' ');
+        const m = textoTotal.match(/(\d{2}\s*9?\s*\d{4}[\s\-]?\d{4})/);
+        if (m) return m[1];
+        return '';
+    }
+    function extrairServicoLimpo(ag) {
+        const direto = ag['ag-servico'] || ag.servico || '';
+        if (direto && direto.length < 100 && !/whats?app\s*:|barbeiro\s*:|valor\s*:|cliente\s*:/i.test(direto)) return direto;
+        const textos = [ag['ag-servico'], ag.servico, ag.summary, ag.description, ag['ag-descricao'], ag.title].filter(Boolean).map(String);
+        for (const texto of textos) {
+            const m = texto.match(/servi[çc]o\s*:?\s*([^|\n]+?)(?:\s+(?:whats?app|barbeiro|valor|cliente)\s*:|$)/i);
+            if (m && m[1].trim().length > 0 && m[1].trim().length < 100) return m[1].trim();
+        }
+        return direto || 'Corte Tradicional';
+    }
+    function extrairNomeCliente(ag) {
+        const textos = [ag['ag-nome'], ag.nome, ag.nome_cliente, ag.summary, ag.title, ag.description, ag['ag-descricao']].filter(Boolean).map(String);
+        for (const t of textos) {
+            const m = t.match(/corte\s*-\s*([^(]+?)(?:\s*\(|$)/i);
+            if (m && m[1].trim().length > 1 && m[1].trim().length < 60) return m[1].trim();
+        }
+        for (const t of textos) {
+            const m = t.match(/cliente\s*:?\s*([A-ZÀ-Ú][^\n|]+?)(?:\s+(?:servi[çc]o|whats?app|barbeiro|valor)\s*:|$)/i);
+            if (m && m[1].trim().length > 1 && m[1].trim().length < 60) return m[1].trim();
+        }
+        const direto = (ag['ag-nome'] || ag.nome || ag.nome_cliente || '').trim();
+        if (direto && direto.length < 60 && !/corte\s*-|cliente\s*:|whats?app|servi[çc]o\s*:|barbeiro\s*:/i.test(direto)) return direto;
+        return direto || 'Cliente Agendado';
+    }
+    function normalizarWhatsApp(numero) {
+        if (!numero) return '';
+        let clean = String(numero).replace(/\D/g, '');
+        if (clean.startsWith('0')) clean = clean.substring(1);
+        while (clean.startsWith('5555')) clean = clean.substring(2);
+        if (clean.length === 8 || clean.length === 9) return '5584' + clean;
+        if (clean.length === 10 || clean.length === 11) return '55' + clean;
+        if (clean.length === 12 || clean.length === 13) return clean;
+        return clean;
+    }
+    function obterValorAgendamento(ag) {
+        const valorDireto = ag['ag-preco'] || ag['ag-valor'] || ag.valor || ag.preco || ag.price || ag.total || ag['ag-total'] || ag['valor_total'] || ag['ag-valor-servico'];
+        if (valorDireto && !isNaN(parseFloat(String(valorDireto).replace(',', '.')))) {
+            const num = parseFloat(String(valorDireto).replace(',', '.'));
+            if (num > 0) return num;
+        }
+        const textos = Object.values(ag).filter(Boolean).map(String);
+        for (const texto of textos) {
+            const m = texto.match(/valor\s*:?\s*R?\$?\s*([\d.,]+)/i);
+            if (m) {
+                const num = parseFloat(m[1].replace(/\./g, '').replace(',', '.')) || parseFloat(m[1].replace(',', '.'));
+                if (!isNaN(num) && num > 0) return num;
+            }
+        }
+        const servicoNormalizado = (ag['ag-servico'] || ag.servico || '').trim();
+        if (PRECOS_SERVICOS[servicoNormalizado]) return PRECOS_SERVICOS[servicoNormalizado];
+        return 0;
+    }
+    function agendamentoPertenceAoAnderson(ag) {
+        const camposBarbeiro = [ag['ag-barbeiro'], ag.barbeiro, ag.barber, ag['barber-id'], ag['ag-barbeiro-nome'], ag.barbeiroNome, ag.barberName, ag['ag-barbeiro-id'], ag['barbeiro_id'], ag['barber_id']].filter(Boolean).map(v => String(v).trim().toLowerCase());
+        if (camposBarbeiro.some(v => v === 'anderson' || v === 'anderson lucas' || v.includes('anderson'))) return true;
+        const textoCombinado = [ag.summary, ag.title, ag.description, ag.descricao, ag['ag-descricao'], ag['ag-servico'], ag.servico].filter(Boolean).join(' ').toLowerCase();
+        if (/barbeiro\s*:\s*(anderson(?:\s+lucas)?)/i.test(textoCombinado)) return true;
+        const todosTextos = Object.values(ag).filter(Boolean).join(' ').toLowerCase();
+        if (/\b(anderson lucas|anderson)\b/.test(todosTextos)) return true;
+        return false;
+    }
+
+    // ================= PAGAMENTOS / FINANCEIRO =================
+    async function carregarPagamentosTodos() {
+        const map = {};
+        try {
+            const resp = await fetch(CAIXA_OBTER_URL);
+            if (!resp.ok) return map;
+            const dataRaw = await resp.json();
+            const data = Array.isArray(dataRaw) ? dataRaw[0] : dataRaw;
+            const linhas = Array.isArray(data) ? data : (data?.data || []);
+            linhas.forEach(row => {
+                const entry = row.json || row;
+                const tipo = String(entry.Tipo || '').toLowerCase().trim();
+                if (tipo !== 'entrada') return;
+                const dataEntry = String(entry.Data || '').substring(0, 10);
+                const descricao = String(entry.Descricao || '');
+                const nome = descricao.split('—')[0].trim().toLowerCase();
+                if (!map[dataEntry]) map[dataEntry] = new Set();
+                if (nome) map[dataEntry].add(nome);
+            });
+        } catch (e) { console.error('Erro ao carregar pagamentos:', e); }
+        return map;
+    }
+    function verificarPagoGlobal(ag, nome, dataStr, pagamentosMap) {
+        if (!ag) return false;
+        if (ag.pago === true || String(ag.pago).toLowerCase() === 'true') return true;
+        const str = JSON.stringify(ag).toLowerCase();
+        if (str.includes('[pago]')) return true;
+        const status = String(ag.status || ag['ag-status'] || ag['payment-status'] || ag['ag-pagamento'] || '').toLowerCase().trim();
+        if (status === 'pago' || status === 'paid' || status.includes('pago')) return true;
+        const setPagos = pagamentosMap[dataStr];
+        if (!setPagos || setPagos.size === 0) return false;
+        const nomeLimpo = String(nome || '').toLowerCase().trim();
+        if (!nomeLimpo) return false;
+        for (const pago of setPagos) {
+            if (pago.includes(nomeLimpo) || nomeLimpo.includes(pago)) return true;
+        }
+        return false;
+    }
+
+    // ================= CARREGAR TAREFAS — SOMENTE MÊS ATUAL =================
+    async function carregarTarefas() {
+        if (STATE.carregando) return;
+        STATE.carregando = true;
+        showLoader('CARREGANDO TAREFAS DO MÊS...');
+        try {
+            const pagamentosMap = await carregarPagamentosTodos();
+            const agora = new Date();
+
+            const inicio = new Date(agora.getFullYear(), agora.getMonth(), 1);
+
+            const diasConsultar = [];
+            for (let d = new Date(inicio); d <= agora; d.setDate(d.getDate() + 1)) {
+                const dataStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                diasConsultar.push(dataStr);
+            }
+
+            const tarefas = [];
+            let algumErro = false;
+
+            await Promise.all(diasConsultar.map(async (dataStr) => {
+                try {
+                    const response = await fetch(CONSULTA_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ "ag-data": dataStr, "ag-barbeiro": BARBEIRO_ID })
+                    });
+                    if (!response.ok) { algumErro = true; return; }
+                    const dadosRaw = await response.json();
+                    const dados = Array.isArray(dadosRaw) ? dadosRaw[0] : dadosRaw;
+                    const todos = Array.isArray(dados.agendamentos) ? dados.agendamentos : [];
+                    const filtrados = todos.filter(agendamentoPertenceAoAnderson);
+
+                    filtrados.forEach(ag => {
+                        const hora = ag['ag-hora'] || ag.hora || '';
+                        if (!hora) return;
+                        const [hh, mm] = String(hora).split(':').map(Number);
+                        if (isNaN(hh) || isNaN(mm)) return;
+                        const dtAg = new Date(`${dataStr}T${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:00`);
+                        if (dtAg >= agora) return;
+
+                        const nome = extrairNomeCliente(ag);
+                        const servico = extrairServicoLimpo(ag);
+                        if (/indispon[ií]vel/i.test(nome) || /indispon[ií]vel/i.test(servico)) return;
+
+                        if (verificarPagoGlobal(ag, nome, dataStr, pagamentosMap)) return;
+
+                        tarefas.push({
+                            data: dataStr,
+                            hora,
+                            dtAg,
+                            nome,
+                            servico,
+                            whatsapp: extrairWhatsApp(ag),
+                            valor: obterValorAgendamento(ag),
+                            ag
+                        });
+                    });
+                } catch (e) {
+                    algumErro = true;
+                    console.error(`Erro ao consultar ${dataStr}:`, e);
+                }
+            }));
+
+            tarefas.sort((a, b) => {
+                if (a.data !== b.data) return b.data.localeCompare(a.data);
+                return a.hora.localeCompare(b.hora);
+            });
+
+            STATE.tarefas = tarefas;
+            renderizarTarefas(algumErro);
+            atualizarMetricas();
+            atualizarBadgeSidebar();
+        } finally {
+            STATE.carregando = false;
+            hideLoader();
+        }
+    }
+
+    // ================= RENDER =================
+    function atualizarMetricas() {
+        const qtd = STATE.tarefas.length;
+        const valor = STATE.tarefas.reduce((s, t) => s + (t.valor || 0), 0);
+        const elQtd = document.getElementById('metric-qtd');
+        const elValor = document.getElementById('metric-valor');
+        if (elQtd) elQtd.textContent = qtd;
+        if (elValor) elValor.textContent = 'R$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    }
+
+    function atualizarBadgeSidebar() {
+        const el = document.getElementById('notif-badge');
+        if (!el) return;
+        const total = STATE.tarefas.length;
+        if (total > 0) {
+            el.textContent = String(total);
+            el.style.display = 'flex';
+        } else {
+            el.style.display = 'none';
+        }
+        const nav = document.getElementById('notif-nav');
+        if (nav) nav.title = total > 0 ? `${total} tarefa(s) atrasada(s) no mês` : 'Sem tarefas atrasadas no mês';
+    }
+
+    function renderizarTarefas(algumErro = false) {
+        const container = document.getElementById('tarefasLista');
+        if (!container) return;
+        const mesNome = getMesAtualNome();
+
+        if (STATE.tarefas.length === 0) {
+            container.innerHTML = `
+                <div class="vazio">
+                    <span class="emoji">🎉</span>
+                    <h3>Nenhuma tarefa atrasada</h3>
+                    <p>Tudo em dia! Todos os atendimentos passados de <strong>${mesNome}</strong> constam como pagos.</p>
+                    ${algumErro ? `<p style="margin-top: 12px; font-size: 0.8rem; color: var(--perigo);">⚠️ Algumas datas podem não ter sido consultadas. Clique em "Recarregar".</p>` : ''}
+                </div>`;
+            return;
+        }
+
+        const grupos = {};
+        STATE.tarefas.forEach(t => {
+            if (!grupos[t.data]) grupos[t.data] = [];
+            grupos[t.data].push(t);
+        });
+        const datas = Object.keys(grupos).sort().reverse();
+
+        container.innerHTML = '';
+
+        datas.forEach(dataStr => {
+            const grupo = grupos[dataStr];
+            const totalDia = grupo.reduce((s, t) => s + (t.valor || 0), 0);
+            const diasAtrasTxt = diasAtras(dataStr);
+
+            const secao = document.createElement('div');
+            secao.className = 'dia-grupo';
+
+            const header = document.createElement('div');
+            header.className = 'dia-header';
+            header.innerHTML = `
+                <div class="dia-data">
+                    ${formatDataFormatada(dataStr)}
+                    <span class="dias-atras">${diasAtrasTxt}</span>
+                </div>
+                <div class="dia-info">${grupo.length} pendente(s) · ${formatMoeda(totalDia)}</div>
+            `;
+            secao.appendChild(header);
+
+            grupo.forEach(tarefa => {
+                const card = document.createElement('div');
+                card.className = 'agendamento-item pendente';
+                card.innerHTML = `
+                    <div>
+                        <div class="cliente">${tarefa.nome}</div>
+                        <div class="servico"><strong>Serviço:</strong> ${tarefa.servico}</div>
+                        <div class="preco">${formatMoeda(tarefa.valor)}</div>
+                        <div class="acoes-agendamento">
+                            ${tarefa.whatsapp ? `
+                                <a href="https://wa.me/${normalizarWhatsApp(tarefa.whatsapp)}" target="_blank" rel="noopener" class="whatsapp-btn">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                    </svg>
+                                    WhatsApp
+                                </a>
+                            ` : ''}
+                            <button class="btn-pagar">💵 Marcar como Pago</button>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="hora">${tarefa.hora} hs</div>
+                        <span class="status-badge pendente">Pendente</span>
+                    </div>
+                `;
+                card.querySelector('.btn-pagar').addEventListener('click', () => abrirPagamento(tarefa));
+                secao.appendChild(card);
+            });
+
+            container.appendChild(secao);
+        });
+    }
+
+    function recarregarTarefas() {
+        invalidarNotifCache();
+        carregarTarefas().then(() => {
+            toast(`${STATE.tarefas.length} tarefa(s) pendente(s) em ${getMesAtualNome()}.`, STATE.tarefas.length > 0 ? 'info' : 'success');
+        });
+    }
+
+    // Botão Recarregar do header (com proteção null-safe)
+    const btnRecarregar = document.getElementById('btnRecarregar');
+    if (btnRecarregar) {
+        btnRecarregar.addEventListener('click', function() {
+            this.disabled = true;
+            this.textContent = '⏳ Carregando...';
+            recarregarTarefas();
+            setTimeout(() => {
+                this.disabled = false;
+                this.textContent = '🔄 Recarregar';
+            }, 600);
+        });
+    }
+
+    // ================= MODAL DE PAGAMENTO =================
+    function abrirPagamento(tarefa) {
+        STATE.taskAtual = tarefa;
+        STATE.formaPagamentoSelecionada = null;
+
+        document.getElementById('pagClienteNome').textContent = tarefa.nome;
+        document.getElementById('pagDataHora').textContent = `${formatDataFormatada(tarefa.data)} · ${tarefa.hora}hs`;
+
+        document.getElementById('pagInfoCorte').innerHTML = `
+            <div class="pagamento-info__linha"><span>Cliente</span><span>${tarefa.nome}</span></div>
+            <div class="pagamento-info__linha"><span>Serviço</span><span>${tarefa.servico}</span></div>
+            <div class="pagamento-info__linha"><span>Data</span><span>${formatDataFormatada(tarefa.data)} (${diasAtras(tarefa.data)})</span></div>
+            <div class="pagamento-info__linha"><span>Horário</span><span>${tarefa.hora} hs</span></div>
+            <div class="pagamento-info__linha"><span>Valor Bruto</span><span class="pagamento-info__valor">${formatMoeda(tarefa.valor)}</span></div>
+        `;
+
+        document.querySelectorAll('#formaPagamentoGrid .forma-pagamento-opcao').forEach(el => el.classList.remove('selecionado'));
+
+        document.getElementById('resumoBruto').textContent = formatMoeda(tarefa.valor);
+        document.getElementById('linhaTaxa').style.display = 'none';
+        document.getElementById('resumoTaxa').textContent = '- R$ 0,00';
+        document.getElementById('resumoLiquido').textContent = formatMoeda(tarefa.valor);
+
+        const btn = document.getElementById('btnConfirmarPagamento');
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+
+        document.getElementById('modalPagamento').classList.add('active');
+    }
+
+    function fecharModalPagamento() {
+        document.getElementById('modalPagamento').classList.remove('active');
+        STATE.taskAtual = null;
+        STATE.formaPagamentoSelecionada = null;
+    }
+
+    // Listener de seleção de forma de pagamento (delegação no document)
+    document.addEventListener('click', (e) => {
+        const opcao = e.target.closest('#formaPagamentoGrid .forma-pagamento-opcao');
+        if (!opcao) return;
+
+        const forma = opcao.dataset.forma;
+        STATE.formaPagamentoSelecionada = forma;
+
+        document.querySelectorAll('#formaPagamentoGrid .forma-pagamento-opcao').forEach(el => el.classList.remove('selecionado'));
+        opcao.classList.add('selecionado');
+
+        if (!STATE.taskAtual) return;
+        const precoBruto = STATE.taskAtual.valor;
+        const taxa = TAXAS_CARTAO[forma] || 0;
+        const valorTaxa = precoBruto * taxa;
+        const valorLiquido = precoBruto - valorTaxa;
+
+        document.getElementById('resumoBruto').textContent = formatMoeda(precoBruto);
+        if (taxa > 0) {
+            document.getElementById('linhaTaxa').style.display = 'flex';
+            document.getElementById('resumoTaxa').textContent = '- ' + formatMoeda(valorTaxa);
+        } else {
+            document.getElementById('linhaTaxa').style.display = 'none';
+        }
+        document.getElementById('resumoLiquido').textContent = formatMoeda(valorLiquido);
+
+        const btn = document.getElementById('btnConfirmarPagamento');
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    });
+
+    async function confirmarPagamento() {
+        if (!STATE.taskAtual) return;
+        if (!STATE.formaPagamentoSelecionada) {
+            toast('Selecione a forma de pagamento.', 'error');
+            return;
+        }
+
+        const tarefa = STATE.taskAtual;
+        const precoBruto = tarefa.valor;
+        const taxa = TAXAS_CARTAO[STATE.formaPagamentoSelecionada] || 0;
+        const valorTaxa = precoBruto * taxa;
+        const valorLiquido = precoBruto - valorTaxa;
+
+        const payload = {
+            "acao": "confirmar_pagamento",
+            "ag-data": tarefa.data,
+            "ag-hora": tarefa.hora,
+            "ag-nome": tarefa.nome,
+            "ag-servico": tarefa.servico,
+            "ag-barbeiro": BARBEIRO_ID,
+            "ag-valor-bruto": precoBruto,
+            "ag-valor-taxa": Number(valorTaxa.toFixed(2)),
+            "ag-valor-liquido": Number(valorLiquido.toFixed(2)),
+            "ag-forma-pagamento": STATE.formaPagamentoSelecionada,
+            "ag-percentual-taxa": taxa
+        };
+
+        showLoader('CONFIRMANDO PAGAMENTO...');
+        try {
+            const response = await fetch(WEBHOOK_PAGAMENTO, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                let texto = '';
+                try { texto = await response.text(); } catch {}
+                toast(`Erro ${response.status}: ${texto || 'resposta inválida'}`, 'error', 5000);
+                return;
+            }
+
+            // Se o backend devolver JSON de erro dentro de 200, detecta
+            let resultado = null;
+            try {
+                const ct = response.headers.get('content-type') || '';
+                if (ct.includes('application/json')) {
+                    resultado = await response.json();
+                } else {
+                    await response.text();
+                }
+            } catch (e) { /* ignora se não for JSON */ }
+
+            if (resultado && resultado.success === false) {
+                toast(`Backend recusou: ${resultado.message || 'erro desconhecido'}`, 'error', 5000);
+                return;
+            }
+
+            toast(`Pagamento confirmado! ${STATE.formaPagamentoSelecionada} — ${formatMoeda(valorLiquido)}`, 'success');
+            fecharModalPagamento();
+
+            STATE.tarefas = STATE.tarefas.filter(t =>
+                !(t.data === tarefa.data && t.hora === tarefa.hora && t.nome === tarefa.nome)
+            );
+            renderizarTarefas();
+            atualizarMetricas();
+            atualizarBadgeSidebar();
+            invalidarNotifCache();
+
+            setTimeout(() => {
+                carregarTarefas().catch(e => console.error(e));
+            }, 4000);
+        } catch (err) {
+            console.error('Erro ao confirmar pagamento:', err);
+            toast('Erro de conexão. O pagamento NÃO foi registrado. Tente novamente.', 'error');
+        } finally {
+            hideLoader();
+        }
+    }
+
+    // Listeners dos botões do modal (null-safe via on())
+    on('btnFecharPagamento', 'click', fecharModalPagamento);
+    on('modalPagamento', 'click', (e) => {
+        if (e.target === e.currentTarget) fecharModalPagamento();
+    });
+    on('btnConfirmarPagamento', 'click', confirmarPagamento);
+
+    // ================= MENU MOBILE =================
+    function toggleMenu() {
+        const hamburger = document.getElementById('hamburger-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (!hamburger || !sidebar || !overlay) return;
+        hamburger.classList.toggle('active');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        document.body.style.overflow = hamburger.classList.contains('active') ? 'hidden' : '';
+    }
+    function closeMenu() {
+        const hamburger = document.getElementById('hamburger-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (!hamburger || !sidebar || !overlay) return;
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // ================= INICIAR =================
+    function iniciarAplicacao() {
+        const mesLabel = getMesAtualLabel();
+        const mesNome = getMesAtualNome();
+        const subMes = document.getElementById('sub-mes');
+        const tituloMes = document.getElementById('titulo-mes');
+        if (subMes) subMes.textContent = mesLabel;
+        if (tituloMes) tituloMes.textContent = mesNome;
+
+        carregarTarefas();
+
+        const hamburger = document.getElementById('hamburger-btn');
+        const overlay = document.getElementById('sidebar-overlay');
+        const navItems = document.querySelectorAll('.nav-item');
+        if (hamburger) hamburger.addEventListener('click', toggleMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+        navItems.forEach(item => item.addEventListener('click', () => {
+            if (!item.classList.contains('notif-nav')) closeMenu();
+        }));
+        window.addEventListener('resize', () => { if (window.innerWidth > 880) closeMenu(); });
+    }
+</script>
+</body>
+</html>

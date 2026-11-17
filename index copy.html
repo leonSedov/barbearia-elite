@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELITTE BARBER — Gestão</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="image.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="image.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="image.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Elitte" />
+  <meta name="theme-color" content="#141414" />
+  <meta name="mobile-web-app-capable" content="yes" />
+    
+
+
+ <style>
+    :root {
+        --tinta: #141414; --tinta-suave: #2a2927;
+        --pedra: #e7e6df; --pedra-card: #f8f7f3;
+        --latao: #b3aa98; --latao-escuro: #6c6456;
+        --bordo: #8c3a32; --bordo-escuro: #6b2a24;
+        --navalha: #3d5a4b; --texto: #151515; --texto-suave: #6a6761; --linha: #d6d4cc;
+        --perigo: #a33b30; --info: #4d5b69; --whatsapp: #25D366;
+        --claro: #f2f1ec;
+        --fonte-titulo: 'Cormorant Garamond', 'Times New Roman', serif;
+        --fonte-cartaz: 'Jost', 'Inter', sans-serif;
+        --fonte-corpo: 'Jost', 'Inter', sans-serif;
+        --fonte-dados: 'Jost', 'Inter', sans-serif;
+        --radius: 4px; --radius-peq: 3px;
+        --sombra: 0 12px 30px -18px rgba(20,20,20,0.30);
+        --sombra-forte: 0 26px 60px -24px rgba(20,20,20,0.45);
+        --faixa: linear-gradient(90deg, #141414, #141414);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: var(--pedra);
+        color: var(--texto);
+        font-family: var(--fonte-corpo);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--pedra); }
+    ::-webkit-scrollbar-thumb { background: var(--latao); border-radius: 3px; }
+
+    .faixa-topo { height: 5px; width: 100%; background: var(--faixa); background-size: 70px 70px; animation: girarFaixa 3.2s linear infinite; }
+    @keyframes girarFaixa { from { background-position: 0 0; } to { background-position: 70px 0; } }
+
+    /* ================= LOGIN OVERLAY ================= */
+    #login-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(20,20,20, 0.95);
+        backdrop-filter: blur(8px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        padding: 20px;
+    }
+    #login-overlay.active { display: flex; }
+    .login-box {
+        background: var(--pedra-card);
+        border-radius: var(--radius);
+        padding: 40px 36px;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: var(--sombra-forte);
+        text-align: center;
+        animation: modalEntrar 0.4s ease;
+        border-top: 5px solid var(--latao);
+    }
+    @keyframes modalEntrar {
+        from { opacity: 0; transform: translateY(-20px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .login-box h1 {
+        font-family: var(--fonte-cartaz);
+        font-size: 1.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--tinta);
+        margin-bottom: 6px;
+    }
+    .login-box .sub {
+        color: var(--texto-suave);
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--linha);
+        padding-bottom: 16px;
+    }
+    .login-box .login-icon {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        color: var(--latao);
+    }
+    .login-box input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid var(--linha);
+        border-radius: var(--radius-peq);
+        font-size: 1rem;
+        font-family: var(--fonte-corpo);
+        background: var(--pedra);
+        color: var(--texto);
+        transition: border-color 0.2s;
+        margin-bottom: 16px;
+        text-align: center;
+        letter-spacing: 2px;
+    }
+    .login-box input:focus {
+        outline: none;
+        border-color: var(--latao);
+    }
+    .login-box .btn-entrar {
+        width: 100%;
+        padding: 14px;
+        background: var(--tinta);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-peq);
+        font-family: var(--fonte-cartaz);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 600;
+        transition: background 0.15s;
+    }
+    .login-box .btn-entrar:hover {
+        background: var(--latao-escuro);
+    }
+    .login-box .erro {
+        color: var(--perigo);
+        font-size: 0.85rem;
+        margin-top: 12px;
+        display: none;
+    }
+    .login-box .erro.visible {
+        display: block;
+    }
+
+    /* ================= SIDEBAR ================= */
+    #sidebar {
+        position: fixed; left: 0; top: 5px; bottom: 0;
+        width: 72px; background: var(--tinta); border-right: 1px solid rgba(181,171,152,0.25);
+        display: flex; flex-direction: column; align-items: center; padding: 22px 0;
+        z-index: 100; transition: width .3s ease; overflow: hidden;
+    }
+    #sidebar:hover { width: 220px; }
+    .sidebar-logo {
+        font-family: var(--fonte-cartaz); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--pedra); white-space: nowrap; overflow: hidden;
+        width: 100%; text-align: center; padding: 0 16px; margin-bottom: 18px;
+    }
+    .sidebar-logo span:last-child { color: var(--latao); opacity: 0; transition: opacity .2s; }
+    #sidebar:hover .sidebar-logo span:last-child { opacity: 1; }
+    .sidebar-logo-icon { min-width: 40px; display: inline-block; }
+
+    .nav-item {
+        width: 100%; display: flex; align-items: center; gap: 14px; padding: 13px 16px;
+        transition: background .15s, border-color .15s; border-left: 3px solid transparent; white-space: nowrap;
+    }
+    .nav-item:hover { background: rgba(181,171,152,0.1); border-left-color: var(--latao-escuro); }
+    .nav-item.active { background: rgba(181,171,152,0.16); border-left-color: var(--latao); }
+    .nav-item.active .nav-icon, .nav-item.active .nav-label { color: var(--latao); }
+    .nav-icon { min-width: 40px; text-align: center; color: #9a968c; font-size: 1.05rem; }
+    .nav-label { font-size: 0.82rem; font-weight: 500; color: #9a968c; opacity: 0; transition: opacity .2s; }
+    #sidebar:hover .nav-label { opacity: 1; }
+
+    /* ================= APP ================= */
+    #app { margin-left: 72px; min-height: 100vh; padding: 36px 40px 60px; max-width: 1180px; }
+
+    .page-header {
+        padding: 0 0 24px; border-bottom: 2px solid var(--linha); margin-bottom: 28px; position: relative; overflow: hidden;
+    }
+    .page-header::after {
+        content: '⌗'; position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+        font-size: 64px; color: rgba(181,171,152,0.15); pointer-events: none;
+    }
+    .page-title { font-family: var(--fonte-cartaz); font-size: 1.9rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--tinta); margin-bottom: 4px; }
+    .page-subtitle { color: var(--texto-suave); font-size: 0.88rem; }
+
+    .card {
+        background: var(--pedra-card); border: 1px solid var(--linha); border-radius: var(--radius);
+        padding: 24px; box-shadow: var(--sombra); position: relative; overflow: hidden; transition: border-color .15s, box-shadow .15s;
+        margin-bottom: 24px;
+    }
+    .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--faixa); background-size: 48px 48px; }
+    .card:hover { border-color: var(--latao); }
+    .card-title {
+        font-family: var(--fonte-cartaz); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em;
+        color: var(--tinta); text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+    }
+    .card-title::after { content: ""; flex: 1; height: 1px; background: var(--linha); }
+    .card-title .total-inline { margin-left: auto; color: var(--texto); font-family: var(--fonte-dados); font-size: 0.9rem; text-transform: none; letter-spacing: 0; }
+
+    /* BOTÕES */
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 26px;
+        border-radius: var(--radius-peq); font-family: var(--fonte-cartaz); font-size: 0.8rem; font-weight: 600;
+        letter-spacing: 0.04em; text-transform: uppercase; transition: background .15s, transform .12s, box-shadow .15s; border: none;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-outline { background: transparent; color: var(--tinta); border: 2px solid var(--linha); }
+    .btn-outline:hover { border-color: var(--latao); background: #efeee8; }
+
+    /* TABELA */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    thead tr { border-bottom: 2px solid var(--linha); }
+    th { text-align: left; padding: 11px 14px; font-family: var(--fonte-cartaz); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tinta); }
+    td { padding: 13px 14px; border-bottom: 1px solid var(--linha); color: var(--texto); }
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: #efeee8; }
+
+    /* FILTRO DE PERÍODO */
+    .filtro-periodo {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: var(--pedra-card);
+        border: 1px solid var(--linha);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        box-shadow: var(--sombra);
+        margin-bottom: 24px;
+    }
+    .filtro-periodo .form-group { margin-bottom: 0; min-width: 150px; flex: 1; }
+    .filtro-periodo label {
+        display: block; font-family: var(--fonte-cartaz); font-size: 0.7rem; font-weight: 600;
+        letter-spacing: 0.06em; text-transform: uppercase; color: var(--tinta); margin-bottom: 7px;
+    }
+    .filtro-periodo input[type="date"] {
+        font-family: var(--fonte-corpo);
+        background: var(--pedra);
+        border: 2px solid var(--linha);
+        border-radius: var(--radius-peq);
+        color: var(--texto);
+        padding: 10px 12px;
+        width: 100%;
+        font-size: 0.88rem;
+        transition: border-color .15s;
+    }
+    .filtro-periodo input[type="date"]:focus { outline: none; border-color: var(--latao); }
+    .filtro-atalhos { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-atalho {
+        padding: 9px 14px;
+        border-radius: var(--radius-peq);
+        border: 2px solid var(--linha);
+        background: var(--pedra);
+        font-family: var(--fonte-cartaz);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--texto-suave);
+        transition: all .15s;
+        white-space: nowrap;
+    }
+    .btn-atalho:hover, .btn-atalho.active { border-color: var(--latao); color: var(--latao-escuro); background: #f2f1ec; }
+
+    /* DIAGNÓSTICO */
+    #diagnostico {
+        font-family: var(--fonte-dados);
+        font-size: .72rem;
+        color: var(--texto-suave);
+        margin: -12px 0 22px;
+    }
+
+    /* KPIs */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 30px; }
+    .kpi-card { background: var(--pedra-card); border: 1px solid var(--linha); border-radius: var(--radius); padding: 20px; box-shadow: var(--sombra); }
+    .kpi-title { font-family: var(--fonte-cartaz); font-size: 0.7rem; text-transform: uppercase; color: var(--texto-suave); letter-spacing: 0.06em; }
+    .kpi-value { font-family: var(--fonte-dados); font-size: 1.5rem; font-weight: 600; margin-top: 8px; color: var(--texto); }
+    .kpi-value.green { color: var(--navalha); }
+    .kpi-value.red { color: var(--bordo); }
+    .kpi-value.gold { color: var(--latao-escuro); }
+
+    /* SEÇÕES */
+    .secao-titulo {
+        font-family: var(--fonte-cartaz);
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--tinta);
+        margin: 38px 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .secao-titulo .numero {
+        width: 26px; height: 26px;
+        background: var(--tinta);
+        color: var(--latao);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+    .secao-titulo::after { content: ""; flex: 1; height: 1px; background: var(--linha); }
+
+    /* FLUXO DE DIVISÃO */
+    .fluxo-grid {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    @media (max-width: 700px) {
+        .fluxo-grid { grid-template-columns: 1fr; }
+        .fluxo-seta { transform: rotate(90deg); margin: 4px auto; }
+    }
+    .fluxo-seta { font-size: 1.6rem; color: var(--latao); text-align: center; }
+    .bloco-divisao {
+        background: var(--pedra-card);
+        border: 1px solid var(--linha);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--sombra);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .bloco-divisao::before {
+        content: "";
+        position: absolute; top: 0; left: 0; right: 0; height: 5px;
+        background: var(--faixa); background-size: 40px 40px;
+    }
+    .bloco-divisao .rotulo {
+        font-family: var(--fonte-cartaz);
+        font-size: 0.72rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--texto-suave);
+        margin-bottom: 6px;
+    }
+    .bloco-divisao .percentual {
+        display: inline-block;
+        font-family: var(--fonte-cartaz);
+        font-size: 0.65rem;
+        background: rgba(181,171,152,0.2);
+        color: var(--latao-escuro);
+        padding: 2px 10px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+    }
+    .bloco-divisao .valor {
+        font-family: var(--fonte-dados);
+        font-size: 1.7rem;
+        font-weight: 600;
+        color: var(--texto);
+    }
+    .bloco-divisao.origem .valor { color: var(--latao-escuro); }
+    .bloco-divisao.destino .valor { color: var(--navalha); }
+
+    .aviso-saldo-negativo {
+        background: #fdecea;
+        border: 1px solid var(--perigo);
+        color: var(--bordo-escuro);
+        border-radius: var(--radius-peq);
+        padding: 12px 16px;
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+        display: none;
+    }
+    .aviso-saldo-negativo.visible { display: block; }
+
+    /* LOADER / TOAST */
+    .loader-overlay {
+        position: fixed; inset: 0; background: rgba(231,230,223,0.92); backdrop-filter: blur(6px);
+        display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9000;
+    }
+    .loader-overlay.visible { display: flex; }
+    .loader-ring { width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--linha); border-top-color: var(--tinta); animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { margin-top: 18px; font-family: var(--fonte-cartaz); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tinta); }
+
+    #toast-container { position: fixed; bottom: 28px; right: 28px; z-index: 9998; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+        display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--pedra-card); border: 1px solid var(--linha);
+        border-radius: var(--radius); min-width: 300px; box-shadow: var(--sombra-forte); animation: slideIn .35s ease; font-size: 0.85rem; color: var(--texto);
+    }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .toast.success { border-color: var(--navalha); }
+    .toast.error { border-color: var(--perigo); }
+    .toast.info { border-color: var(--latao); }
+
+    /* ================= HEADER MOBILE ================= */
+    .mobile-header {
+        display: none;
+        position: fixed;
+        top: 5px;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: var(--tinta);
+        border-bottom: 1px solid rgba(181,171,152,0.25);
+        z-index: 101;
+        align-items: center;
+        padding: 0 16px;
+        gap: 16px;
+    }
+
+    .hamburger-btn {
+        display: none;
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        padding: 0;
+    }
+
+    .hamburger-line {
+        width: 24px;
+        height: 2px;
+        background: var(--latao);
+        transition: all 0.3s ease;
+    }
+
+    .hamburger-btn.active .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(8px, 8px); }
+    .hamburger-btn.active .hamburger-line:nth-child(2) { opacity: 0; }
+    .hamburger-btn.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
+
+    .mobile-logo {
+        flex: 1;
+        font-family: var(--fonte-cartaz);
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--pedra);
+        white-space: nowrap;
+    }
+    .mobile-logo-text { color: var(--latao); }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(20,20,20, 0.5);
+        z-index: 99;
+        backdrop-filter: blur(4px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* ================= MOBILE RESPONSIVE ================= */
+    @media (max-width: 880px) {
+        .mobile-header { display: flex; }
+        .hamburger-btn { display: flex; }
+
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 65px;
+            bottom: 0;
+            width: 280px;
+            height: auto;
+            max-height: calc(100vh - 65px);
+            overflow-y: auto;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 102;
+        }
+
+        #sidebar.active { transform: translateX(0); }
+        #sidebar:hover { width: 280px; }
+        .sidebar-logo span:last-child { opacity: 1; }
+        .nav-label { opacity: 1; }
+
+        #app { margin-left: 0; padding-top: 80px; }
+
+        .kpi-grid { grid-template-columns: 1fr 1fr; }
+        .btn { padding: 10px 20px; font-size: 0.75rem; }
+        .page-title { font-size: 1.5rem; }
+        .card { padding: 16px; }
+        table { font-size: 0.75rem; }
+        th, td { padding: 8px 10px; }
+        #toast-container { bottom: 16px; right: 16px; }
+        .toast { min-width: 250px; font-size: 0.75rem; }
+    }
+
+    @media (max-width: 520px) {
+        .kpi-grid { grid-template-columns: 1fr; }
+        .page-title { font-size: 1.2rem; }
+        #app { padding: 80px 16px 40px; }
+        .card { padding: 12px; }
+        table { font-size: 0.7rem; }
+        th, td { padding: 6px 8px; }
+        .btn { padding: 8px 16px; font-size: 0.7rem; }
+        .toast { min-width: 200px; font-size: 0.7rem; padding: 10px 12px; }
+        .page-header { padding: 0 0 16px; margin-bottom: 20px; }
+        .kpi-value { font-size: 1.2rem; }
+        .bloco-divisao .valor { font-size: 1.3rem; }
+    }
+
+    @media (max-width: 380px) {
+        .mobile-logo { font-size: 0.8rem; }
+        #app { padding: 80px 12px 40px; }
+        .page-title { font-size: 1rem; }
+        table { font-size: 0.65rem; }
+    }
+  
+    /* =========================================================
+       ELITTE BARBER — TEMA VISUAL
+       Preto + off-white acinzentado + serifada do logo.
+       Só aparência: funções e webhooks não foram alterados.
+    ========================================================= */
+    /* paleta: ver :root no início do <style> */
+    body { font-variant-numeric: lining-nums tabular-nums; }
+    ::selection { background: #141414; color: var(--claro); }
+    .faixa-topo { animation: none !important; background: #141414 !important; }
+    .card::before, .card--faixa::before, .edit-modal::before, .bloco-divisao::before, .wizard-caixa::before { height: 2px !important; }
+    .stat-card::before { height: 2px !important; background: linear-gradient(90deg, #141414, transparent) !important; }
+    .coroa { width: 26px; height: 20px; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+    /* Títulos na serifada do logo */
+    .page-title, .login-box h1, .modal h2, .perfil-info h1, .step__titulo, #step-sucesso h2,
+    .vazio h3, .secao-titulo, .edit-modal-title, .cal-title, .calendar-header span, .selected-date-title {
+        font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: 0.06em;
+    }
+    .page-title { font-size: 2.3rem; line-height: 1.05; }
+    .page-header { border-bottom: 1px solid rgba(20,20,20,0.55); }
+    .page-subtitle { letter-spacing: 0.02em; }
+    .card-title, .sidebar-card__titulo { letter-spacing: 0.2em; font-weight: 500; }
+    .kpi-title, .stat-label, .metric-label, .mini-kpi-title, .section-label, .bloco-divisao .rotulo,
+    .wizard__legenda, .cal-header, .weekday { letter-spacing: 0.16em; font-weight: 500; }
+    .metric-value, .kpi-value, .stat-value, .bloco-divisao .valor, .pagamento-info__valor,
+    .edit-total-box strong, .pagamento-resumo__linha.total strong, .mini-kpi-value {
+        font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: 0.01em;
+        font-variant-numeric: lining-nums tabular-nums;
+    }
+    .metric-value { font-size: 2.6rem; color: var(--texto); }
+    .kpi-value { font-size: 1.85rem; }
+    .mini-kpi-value { font-size: 1.3rem; }
+    .stat-value { font-size: 2rem; color: var(--texto); }
+    .card:hover { border-color: #a9a69e; }
+
+    /* Botões */
+    .login-box .btn-entrar, .modal .btn-enviar, .btn-cta, .btn-agendar-linha, .btn-acao, .btn,
+    .btn-primary, .btn-outline, .btn-cancel, .btn-atalho, .btn-upload, .btn-mini {
+        letter-spacing: 0.16em; font-weight: 500;
+    }
+    .cliente-item .cliente-badge, .btn-recargar { background: #141414 !important; color: var(--claro) !important; }
+    .btn-refresh:hover, .btn-ver-img:hover { background: #141414; border-color: #141414; color: var(--claro); }
+
+    /* Sidebar */
+    #sidebar { background: #141414; border-right: 1px solid rgba(242,241,236,0.08); }
+    .sidebar-logo {
+        display: flex; align-items: center; justify-content: flex-start; gap: 6px;
+        font-family: var(--fonte-titulo); font-size: 1.35rem; font-weight: 600; letter-spacing: 0.16em;
+        color: var(--claro); text-align: left; padding: 0 16px; margin-bottom: 26px;
+    }
+    .sidebar-logo-icon { min-width: 40px; display: inline-flex !important; justify-content: center; color: var(--claro); }
+    .sidebar-logo span:last-child { color: var(--claro); }
+    .sidebar-perfil { border-bottom-color: rgba(242,241,236,0.10) !important; }
+    .sidebar-perfil__foto { border: 1px solid rgba(242,241,236,0.55) !important; filter: grayscale(1); }
+    .sidebar-perfil__nome { font-family: var(--fonte-titulo); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.04em; color: var(--claro); }
+    .nav-icon, .nav-label { color: #9a968c; }
+    .nav-label { letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; }
+    .nav-item:hover { background: rgba(242,241,236,0.05); border-left-color: rgba(242,241,236,0.35); }
+    .nav-item.active { background: rgba(242,241,236,0.08); border-left-color: var(--claro); }
+    .nav-item.active .nav-icon, .nav-item.active .nav-label { color: var(--claro); }
+
+    /* Cabeçalho mobile */
+    .mobile-header { background: #141414; border-bottom: 1px solid rgba(242,241,236,0.08); }
+    .hamburger-line { background: var(--claro); }
+    .mobile-logo {
+        display: flex; align-items: center; gap: 8px; font-family: var(--fonte-titulo);
+        font-size: 1.25rem; font-weight: 600; letter-spacing: 0.16em; color: var(--claro);
+    }
+    .mobile-logo .coroa { width: 22px; height: 17px; }
+    .mobile-logo-text {
+        font-family: var(--fonte-cartaz); font-size: 0.58rem; font-weight: 400;
+        letter-spacing: 0.42em; color: var(--latao); margin-left: 2px;
+    }
+    .notif-bell-mobile { color: var(--claro) !important; }
+    .notif-badge { border-color: #141414 !important; }
+
+    /* Login */
+    #login-overlay { background: rgba(14,14,14,0.97) !important; }
+    .login-box { border-top: none !important; background: var(--pedra) !important; padding: 46px 38px 36px !important; }
+    .login-box .login-icon { color: var(--texto); margin-bottom: 6px; line-height: 1; }
+    .login-box .login-icon .coroa { width: 46px; height: 35px; }
+    .login-box h1 { font-size: 2.7rem; letter-spacing: 0.1em; margin-bottom: 0; line-height: 1; }
+    .login-marca {
+        font-family: var(--fonte-cartaz); font-size: 0.72rem; letter-spacing: 0.5em; padding-left: 0.5em;
+        text-transform: uppercase; color: var(--texto); margin: 8px 0 16px;
+    }
+    .login-box input { background: var(--pedra-card); }
+
+    /* Loader */
+    .loader-ring { border-top-color: #141414 !important; }
+    .loader-text { letter-spacing: 0.3em; }
+
+    .page-header::after {
+        content: "" !important; width: 70px; height: 52px; font-size: 0 !important;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 24' fill='none' stroke='%23141414' stroke-width='1.2'%3E%3Cpath d='M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z'/%3E%3C/svg%3E") center / contain no-repeat; opacity: 0.18;
+    }
+</style>
+</head>
+<body>
+
+<div class="faixa-topo" aria-hidden="true"></div>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay" class="active">
+    <div class="login-box">
+        <div class="login-icon"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg></div>
+        <h1>Elitte</h1>
+        <div class="login-marca">Barber</div>
+        <div class="sub">Painel Administrativo</div>
+        <input type="password" id="senha-input" placeholder="Digite a senha" autocomplete="off">
+        <button class="btn-entrar" id="btn-login">Entrar</button>
+        <div class="erro" id="login-erro">Senha incorreta. Tente novamente.</div>
+    </div>
+</div>
+
+  <!-- MOBILE HEADER -->
+  <div class="mobile-header">
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    <div class="mobile-logo"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg><span>Elitte</span><span class="mobile-logo-text">Barber</span></div>
+  </div>
+
+  <!-- SIDEBAR OVERLAY -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- LOADER -->
+  <div class="loader-overlay" id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">PROCESSANDO...</div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo"><span class="sidebar-logo-icon"><svg class="coroa" viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="miter" aria-hidden="true"><path d="M3 20.5 L4.6 6 L10.6 12.2 L16 2.8 L21.4 12.2 L27.4 6 L29 20.5 Z"/></svg></span><span>Elitte</span></div>
+
+    <a href="index.html" class="nav-item active">
+      <span class="nav-icon">◈</span>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="financeiro.html" class="nav-item">
+      <span class="nav-icon">◎</span>
+      <span class="nav-label">Financeiro</span>
+    </a>
+    <a href="barbeiros.html" class="nav-item">
+      <span class="nav-icon">◉</span>
+      <span class="nav-label">Barbeiros</span>
+    </a>
+    <a href="agenda.html" class="nav-item">
+      <span class="nav-icon">▦</span>
+      <span class="nav-label">Agenda</span>
+    </a>
+    <a href="clientes.html" class="nav-item">
+      <span class="nav-icon">◈</span>
+      <span class="nav-label">Clientes</span>
+    </a>
+  </nav>
+
+  <!-- MAIN CONTENT (DASHBOARD — apenas Divisão de Lucros) -->
+  <main id="app" style="display:none;">
+
+    <div class="page-header">
+      <div class="page-title">Divisão de Lucros</div>
+      <p class="page-subtitle">Renda total, despesas e repasse entre barbeiro e sócios no período selecionado</p>
+    </div>
+
+    <div style="margin-bottom: 26px;">
+      <button class="btn btn-outline" onclick="carregarDadosDivisao()">
+        ⟳ &nbsp;Atualizar Dados
+      </button>
+    </div>
+
+    <!-- FILTRO DE PERÍODO -->
+    <div class="filtro-periodo">
+      <div class="form-group">
+        <label>Data Inicial</label>
+        <input type="date" id="filtro-inicio" />
+      </div>
+      <div class="form-group">
+        <label>Data Final</label>
+        <input type="date" id="filtro-fim" />
+      </div>
+      <div class="filtro-atalhos">
+        <button class="btn-atalho" data-atalho="hoje">Hoje</button>
+        <button class="btn-atalho" data-atalho="semana">7 Dias</button>
+        <button class="btn-atalho active" data-atalho="mes">Este Mês</button>
+        <button class="btn-atalho" data-atalho="tudo">Tudo</button>
+      </div>
+    </div>
+
+    <!-- DIAGNÓSTICO DA CARGA -->
+    <div id="diagnostico"></div>
+
+    <!-- RESUMO GERAL -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Renda Total do Período</div>
+        <div class="kpi-value gold" id="kpi-renda">R$ 0,00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Despesas Totais do Período</div>
+        <div class="kpi-value red" id="kpi-despesas">R$ 0,00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Saldo Líquido p/ Sócios</div>
+        <div class="kpi-value green" id="kpi-saldo-liquido">R$ 0,00</div>
+      </div>
+    </div>
+
+    <div class="aviso-saldo-negativo" id="aviso-negativo">
+      ⚠ As despesas do período superaram o fundo operacional. O saldo dos sócios ficará negativo até esse déficit ser coberto.
+    </div>
+
+    <!-- ETAPA 1: DIVISÃO INICIAL -->
+    <div class="secao-titulo"><span class="numero">1</span> Divisão Inicial da Renda</div>
+    <div class="fluxo-grid">
+      <div class="bloco-divisao origem">
+        <div class="rotulo">Renda Total Recebida</div>
+        <div class="valor" id="fluxo-renda">R$ 0,00</div>
+      </div>
+      <div class="fluxo-seta">→</div>
+      <div class="fluxo-grid" style="grid-template-columns: 1fr 1fr; gap:16px;">
+        <div class="bloco-divisao">
+          <div class="percentual">50%</div>
+          <div class="rotulo">Repasse Barbeiro Anderson Lucas</div>
+          <div class="valor" id="fluxo-barbeiro">R$ 0,00</div>
+        </div>
+        <div class="bloco-divisao">
+          <div class="percentual">50%</div>
+          <div class="rotulo">Vai pro Caixa</div>
+          <div class="valor" id="fluxo-fundo">R$ 0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESPESAS -->
+    <div class="card" style="margin-top: 22px;">
+      <div class="card-title">Despesas do Período <span class="total-inline" id="total-despesas-inline">R$ 0,00</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Descrição</th><th>Data</th><th>Valor</th></tr>
+          </thead>
+          <tbody id="tabela-despesas">
+            <tr><td colspan="3" style="text-align:center; color:var(--texto-suave); padding:24px;">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ETAPA 2: DIVISÃO FINAL -->
+    <div class="secao-titulo"><span class="numero">2</span> Divisão Final entre Sócios</div>
+    <div class="fluxo-grid">
+      <div class="bloco-divisao">
+        <div class="rotulo">Saldo Líquido (Caixa − Despesas)</div>
+        <div class="valor" id="fluxo-saldo">R$ 0,00</div>
+      </div>
+      <div class="fluxo-seta">→</div>
+      <div class="fluxo-grid" style="grid-template-columns: 1fr 1fr; gap:16px;">
+        <div class="bloco-divisao destino">
+          <div class="percentual">50%</div>
+          <div class="rotulo">Sócio 1</div>
+          <div class="valor" id="fluxo-kayo">R$ 0,00</div>
+        </div>
+        <div class="bloco-divisao destino">
+          <div class="percentual">50%</div>
+          <div class="rotulo">Sócio 2</div>
+          <div class="valor" id="fluxo-muniz-socio">R$ 0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTRADAS (TRANSPARÊNCIA DA RENDA) -->
+    <div class="card" style="margin-top: 30px;">
+      <div class="card-title">Lançamentos de Entrada (compõem a Renda Total) <span class="total-inline" id="total-entradas-inline">R$ 0,00</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Descrição</th><th>Data</th><th>Valor</th></tr>
+          </thead>
+          <tbody id="tabela-entradas">
+            <tr><td colspan="3" style="text-align:center; color:var(--texto-suave); padding:24px;">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ================= SISTEMA DE SENHA =================
+    const SENHA_CORRETA = 'km12873';
+    const STORAGE_KEY = 'auth_data_dashboard';
+
+    function getAuthData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    }
+
+    function setAuthData() {
+      const h = new Date();
+      const dataStr = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: dataStr })); } catch {}
+    }
+
+    function precisaAutenticar() {
+      const auth = getAuthData();
+      if (!auth || !auth.data) return true;
+
+      const hoje = new Date();
+      if (hoje.getDate() === 8) {
+        const [a, m, d] = auth.data.split('-').map(n => parseInt(n, 10));
+        return !(a === hoje.getFullYear() && m === hoje.getMonth() + 1 && d === 8);
+      }
+      return false;
+    }
+
+    function autenticar(senha) {
+      if (senha === SENHA_CORRETA) {
+        setAuthData();
+        document.getElementById('login-overlay').classList.remove('active');
+        document.getElementById('app').style.display = 'block';
+        iniciarDashboard();
+        return true;
+      }
+      const erro = document.getElementById('login-erro');
+      erro.classList.add('visible');
+      setTimeout(() => erro.classList.remove('visible'), 3000);
+      return false;
+    }
+
+    /* =============================================
+       CONFIG
+    ============================================= */
+    const API_CONFIG = {
+      OBTER_CAIXA: 'https://n8n-n8n.njqmsx.easypanel.host/webhook/caixa-obter',
+      TIMEOUT_MS: 20000,
+      LIMITE_N8N: 1000 // mesmo "limit" do nó Get row(s) no n8n
+    };
+
+    /* =============================================
+       UTILITÁRIOS
+    ============================================= */
+    function showLoader(msg = 'PROCESSANDO...') {
+      document.getElementById('loader').classList.add('visible');
+      document.querySelector('.loader-text').textContent = msg;
+    }
+    function hideLoader() { document.getElementById('loader').classList.remove('visible'); }
+
+    function toast(msg, type = 'info', duration = 4000) {
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      const span = document.createElement('span');
+      span.className = 'toast-msg';
+      span.textContent = msg;
+      el.appendChild(span);
+      document.getElementById('toast-container').appendChild(el);
+      setTimeout(() => el.remove(), duration);
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+      ));
+    }
+
+    const fmtBRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    // recebe CENTAVOS (inteiro)
+    function formatMoeda(centavos) {
+      return fmtBRL.format((centavos || 0) / 100).replace(/\u00a0/g, ' ');
+    }
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function dataParaInput(d) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+
+    /* =============================================
+       PARSERS ROBUSTOS (principal causa de "valores estranhos")
+    ============================================= */
+
+    // Aceita 50, "50", "50.5", "50,50", "R$ 1.500,00", "1,500.00"
+    // Retorna CENTAVOS (inteiro) para evitar erro de ponto flutuante.
+    function parseValorCentavos(v) {
+      if (typeof v === 'number') return Number.isFinite(v) ? Math.round(v * 100) : 0;
+      let s = String(v ?? '').replace(/[^\d,.\-]/g, '');
+      if (!s || s === '-') return 0;
+
+      const temVirgula = s.includes(',');
+      const temPonto = s.includes('.');
+
+      if (temVirgula && temPonto) {
+        if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
+        else s = s.replace(/,/g, '');
+      } else if (temVirgula) {
+        s = s.replace(/\./g, '').replace(',', '.');
+      } else if (temPonto && /^-?\d{1,3}(\.\d{3})+$/.test(s)) {
+        s = s.replace(/\./g, ''); // "1.500" => 1500
+      }
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? Math.round(n * 100) : 0;
+    }
+
+    // "yyyy-mm-dd" puro é tratado como data LOCAL (antes virava UTC e caía no dia anterior).
+    function parseData(v) {
+      if (v === null || v === undefined || v === '') return { date: null, somenteData: false };
+      if (v instanceof Date) return { date: isNaN(v) ? null : v, somenteData: false };
+      if (typeof v === 'number') { const d = new Date(v); return { date: isNaN(d) ? null : d, somenteData: false }; }
+
+      const s = String(v).trim();
+      let m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (m) return { date: new Date(+m[1], +m[2] - 1, +m[3], 12, 0, 0), somenteData: true };
+
+      m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:[ ,T]+(\d{1,2}):(\d{2}))?/);
+      if (m) {
+        return {
+          date: new Date(+m[3], +m[2] - 1, +m[1], +(m[4] ?? 12), +(m[5] ?? 0)),
+          somenteData: m[4] === undefined
+        };
+      }
+
+      const iso = /^\d{4}-\d{2}-\d{2} \d/.test(s) ? s.replace(' ', 'T') : s;
+      const d = new Date(iso);
+      return { date: isNaN(d) ? null : d, somenteData: false };
+    }
+
+    function semAcento(s) {
+      return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    }
+
+    const PALAVRAS_SAIDA = ['saida', 'despesa', 'sangria', 'perda', 'retirada', 'pagamento', 'gasto', 'custo'];
+    const PALAVRAS_ENTRADA = ['entrada', 'receita', 'venda', 'recebimento', 'ganho'];
+
+    function classificarTipo(tipoBruto) {
+      const t = semAcento(tipoBruto);
+      if (PALAVRAS_SAIDA.some(p => t.includes(p))) return 'saida';
+      if (PALAVRAS_ENTRADA.some(p => t.includes(p))) return 'entrada';
+      return 'desconhecido'; // ANTES: virava "entrada" em silêncio e inflava a renda
+    }
+
+    function pick(row, chaves) {
+      for (const k of chaves) if (row[k] !== undefined && row[k] !== null) return row[k];
+      return undefined;
+    }
+
+    function normalizarLinha(row) {
+      const tipoOriginal = pick(row, ['Tipo', 'tipo']) ?? '';
+      const { date, somenteData } = parseData(pick(row, ['Data', 'data_hora', 'data']));
+      let centavos = parseValorCentavos(pick(row, ['Valor', 'valor']));
+      const tipo = classificarTipo(tipoOriginal);
+      if (tipo === 'saida') centavos = Math.abs(centavos);
+
+      return {
+        id: pick(row, ['id', 'ID']) ?? null,
+        tipo,
+        tipo_original: String(tipoOriginal),
+        descricao: String(pick(row, ['Descricao', 'descricao']) ?? ''),
+        barbeiro: String(pick(row, ['Barbeiro', 'barbeiro']) ?? ''),
+        centavos,
+        data: date,
+        somenteData
+      };
+    }
+
+    // Extrai as linhas de qualquer formato que o n8n devolver
+    function extrairLinhas(data) {
+      let arr;
+      if (Array.isArray(data)) arr = data;
+      else if (Array.isArray(data?.data)) arr = data.data;
+      else if (data && typeof data === 'object') arr = [data];
+      else arr = [];
+
+      return arr
+        .map(item => item?.json ?? item)
+        .filter(r => r && typeof r === 'object' &&
+          ['Tipo', 'tipo', 'Valor', 'valor', 'Descricao', 'descricao'].some(k => r[k] !== undefined));
+    }
+
+    /* =============================================
+       CARREGAR DADOS
+    ============================================= */
+    let movimentacoes = [];
+    let resumoCarga = { recebidas: 0, duplicadas: 0, semData: 0, tipoDesconhecido: 0, tiposDesconhecidos: [] };
+    let reqId = 0;
+
+    async function carregarDadosDivisao() {
+      const meuId = ++reqId;
+      showLoader('CARREGANDO LANÇAMENTOS...');
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), API_CONFIG.TIMEOUT_MS);
+
+      try {
+        const resp = await fetch(`${API_CONFIG.OBTER_CAIXA}?t=${Date.now()}`, { cache: 'no-store', signal: ctrl.signal });
+        if (!resp.ok) throw new Error('Resposta HTTP ' + resp.status);
+
+        const texto = await resp.text();
+        const data = texto.trim() ? JSON.parse(texto) : [];
+        if (meuId !== reqId) return; // chegou uma resposta mais nova, ignora esta
+
+        const brutas = extrairLinhas(data);
+
+        // remove duplicatas REAIS (mesmo id); lançamentos iguais com ids diferentes são mantidos
+        const vistos = new Set();
+        let duplicadas = 0;
+        const normalizadas = [];
+        for (const r of brutas) {
+          const n = normalizarLinha(r);
+          if (n.id !== null) {
+            if (vistos.has(String(n.id))) { duplicadas++; continue; }
+            vistos.add(String(n.id));
+          }
+          normalizadas.push(n);
+        }
+        movimentacoes = normalizadas;
+
+        const desconhecidos = movimentacoes.filter(m => m.tipo === 'desconhecido');
+        resumoCarga = {
+          recebidas: brutas.length,
+          duplicadas,
+          semData: movimentacoes.filter(m => !m.data).length,
+          tipoDesconhecido: desconhecidos.length,
+          tiposDesconhecidos: [...new Set(desconhecidos.map(m => m.tipo_original || '(vazio)'))]
+        };
+
+        console.log('📊 Linhas brutas do n8n (amostra):', brutas.slice(0, 5));
+        console.table(movimentacoes.slice(0, 15).map(m => ({
+          id: m.id, tipo: m.tipo, tipo_original: m.tipo_original, descricao: m.descricao,
+          valor: m.centavos / 100, data: m.data ? m.data.toLocaleString('pt-BR') : null
+        })));
+        console.log('🔎 Resumo da carga:', resumoCarga);
+
+        aplicarFiltro();
+
+        if (brutas.length >= API_CONFIG.LIMITE_N8N) {
+          toast(`Atenção: o n8n devolveu ${brutas.length} linhas (limite). Pode haver lançamentos antigos faltando.`, 'error', 7000);
+        } else if (movimentacoes.length) {
+          toast(`${movimentacoes.length} lançamentos carregados`, 'success');
+        } else {
+          toast('Nenhum lançamento encontrado no backend.', 'info');
+        }
+      } catch (err) {
+        if (meuId !== reqId) return;
+        console.warn('Não foi possível carregar os lançamentos.', err);
+        movimentacoes = [];
+        resumoCarga = { recebidas: 0, duplicadas: 0, semData: 0, tipoDesconhecido: 0, tiposDesconhecidos: [] };
+        aplicarFiltro();
+        toast(err.name === 'AbortError'
+          ? 'O servidor demorou demais para responder.'
+          : 'Não foi possível carregar os dados do n8n. Verifique a conexão.', 'error');
+      } finally {
+        clearTimeout(timer);
+        if (meuId === reqId) hideLoader();
+      }
+    }
+
+    /* =============================================
+       FILTRO DE PERÍODO
+    ============================================= */
+    function definirAtalho(tipo) {
+      const hoje = new Date();
+      let inicio;
+      const fim = new Date(hoje);
+
+      if (tipo === 'hoje') inicio = new Date(hoje);
+      else if (tipo === 'semana') { inicio = new Date(hoje); inicio.setDate(inicio.getDate() - 6); }
+      else if (tipo === 'mes') inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+      else inicio = new Date(2000, 0, 1);
+
+      document.getElementById('filtro-inicio').value = dataParaInput(inicio);
+      document.getElementById('filtro-fim').value = dataParaInput(fim);
+      document.querySelectorAll('.btn-atalho').forEach(b => b.classList.toggle('active', b.dataset.atalho === tipo));
+      aplicarFiltro();
+    }
+
+    function aplicarFiltro() {
+      const inicioStr = document.getElementById('filtro-inicio').value;
+      const fimStr = document.getElementById('filtro-fim').value;
+
+      const inicio = inicioStr ? new Date(inicioStr + 'T00:00:00') : new Date(0);
+      const fim = fimStr ? new Date(fimStr + 'T23:59:59.999') : new Date(8640000000000000);
+
+      const filtradas = movimentacoes.filter(m => m.data && m.data >= inicio && m.data <= fim);
+      calcularDivisao(filtradas);
+    }
+
+    /* =============================================
+       REGRA DE NEGÓCIO (tudo em centavos)
+    ============================================= */
+    function calcularDivisao(lista) {
+      let renda = 0, despesas = 0;
+      const entradas = [], saidas = [];
+
+      for (const m of lista) {
+        if (m.tipo === 'entrada') { renda += m.centavos; entradas.push(m); }
+        else if (m.tipo === 'saida') { despesas += m.centavos; saidas.push(m); }
+        // tipo 'desconhecido' NÃO entra no cálculo
+      }
+
+      const maisRecente = (a, b) => b.data - a.data;
+      entradas.sort(maisRecente);
+      saidas.sort(maisRecente);
+
+      const repasseBarbeiro = Math.round(renda / 2);
+      const fundoDespesas = renda - repasseBarbeiro;
+      const saldoLiquido = fundoDespesas - despesas;
+      const parteKayo = Math.round(saldoLiquido / 2);
+      const parteMuniz = saldoLiquido - parteKayo; // Kayo + Muniz = saldo exato
+
+      const set = (id, txt) => { document.getElementById(id).textContent = txt; };
+
+      set('kpi-renda', formatMoeda(renda));
+      set('kpi-despesas', formatMoeda(despesas));
+      set('kpi-saldo-liquido', formatMoeda(saldoLiquido));
+      document.getElementById('kpi-saldo-liquido').className = 'kpi-value ' + (saldoLiquido < 0 ? 'red' : 'green');
+
+      set('fluxo-renda', formatMoeda(renda));
+      set('fluxo-barbeiro', formatMoeda(repasseBarbeiro));
+      set('fluxo-fundo', formatMoeda(fundoDespesas));
+      set('fluxo-saldo', formatMoeda(saldoLiquido));
+      document.getElementById('fluxo-saldo').style.color = saldoLiquido < 0 ? 'var(--perigo)' : '';
+      set('fluxo-kayo', formatMoeda(parteKayo));
+      set('fluxo-muniz-socio', formatMoeda(parteMuniz));
+
+      document.getElementById('aviso-negativo').classList.toggle('visible', saldoLiquido < 0);
+      set('total-despesas-inline', formatMoeda(despesas));
+      set('total-entradas-inline', formatMoeda(renda));
+
+      renderTabela('tabela-despesas', saidas, 3);
+      renderTabela('tabela-entradas', entradas, 3);
+      renderDiagnostico(lista.length, entradas.length, saidas.length);
+    }
+
+    function renderTabela(idTbody, lista, colspan) {
+      const tbody = document.getElementById(idTbody);
+      if (!lista.length) {
+        tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center; color:var(--texto-suave); padding:24px;">Nenhum lançamento no período selecionado.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = lista.map(m => {
+        const dataFmt = m.somenteData
+          ? m.data.toLocaleDateString('pt-BR')
+          : m.data.toLocaleDateString('pt-BR') + ' ' + m.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const entrada = m.tipo === 'entrada';
+        return `
+          <tr>
+            <td>${escapeHtml(m.descricao) || '—'}</td>
+            <td>${dataFmt}</td>
+            <td style="color:${entrada ? 'var(--navalha)' : 'var(--bordo)'}; font-weight:600;">${entrada ? '+' : '-'} ${formatMoeda(Math.abs(m.centavos))}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    // Linha pequena sob o filtro: ajuda a enxergar de onde vêm números estranhos
+    function renderDiagnostico(totalPeriodo, nEntradas, nSaidas) {
+      const el = document.getElementById('diagnostico');
+      if (!el) return;
+      const r = resumoCarga;
+      const partes = [`${r.recebidas} linhas recebidas`, `${totalPeriodo} no período (${nEntradas} entradas, ${nSaidas} despesas)`];
+      if (r.duplicadas) partes.push(`${r.duplicadas} duplicadas removidas`);
+      if (r.semData) partes.push(`${r.semData} sem data válida (ignoradas)`);
+      if (r.tipoDesconhecido) partes.push(`${r.tipoDesconhecido} com tipo desconhecido (ignoradas): ${r.tiposDesconhecidos.join(', ')}`);
+      el.textContent = partes.join(' · ');
+      el.style.color = (r.semData || r.tipoDesconhecido) ? 'var(--perigo)' : 'var(--texto-suave)';
+    }
+
+    /* =============================================
+       MENU HAMBÚRGUER
+    ============================================= */
+    function setMenu(aberto) {
+      document.getElementById('hamburger-btn').classList.toggle('active', aberto);
+      document.getElementById('hamburger-btn').setAttribute('aria-expanded', String(aberto));
+      document.getElementById('sidebar').classList.toggle('active', aberto);
+      document.getElementById('sidebar-overlay').classList.toggle('active', aberto);
+      document.body.style.overflow = aberto ? 'hidden' : '';
+    }
+    const toggleMenu = () => setMenu(!document.getElementById('sidebar').classList.contains('active'));
+    const closeMenu = () => setMenu(false);
+
+    /* =============================================
+       INICIALIZAÇÃO
+    ============================================= */
+    let dashboardIniciado = false;
+
+    function iniciarDashboard() {
+      if (dashboardIniciado) return; // evita listeners duplicados
+      dashboardIniciado = true;
+
+      document.querySelectorAll('.btn-atalho').forEach(btn => btn.addEventListener('click', () => definirAtalho(btn.dataset.atalho)));
+      ['filtro-inicio', 'filtro-fim'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+          document.querySelectorAll('.btn-atalho').forEach(b => b.classList.remove('active'));
+          aplicarFiltro();
+        });
+      });
+
+      document.getElementById('hamburger-btn').addEventListener('click', toggleMenu);
+      document.getElementById('sidebar-overlay').addEventListener('click', closeMenu);
+      document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', closeMenu));
+      window.addEventListener('resize', () => { if (window.innerWidth > 880) closeMenu(); });
+
+      definirAtalho('mes');
+      carregarDadosDivisao();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('senha-input');
+      document.getElementById('btn-login').addEventListener('click', () => { autenticar(input.value); input.value = ''; });
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-login').click(); });
+
+      if (precisaAutenticar()) {
+        document.getElementById('login-overlay').classList.add('active');
+        document.getElementById('app').style.display = 'none';
+        input.focus();
+      } else {
+        document.getElementById('login-overlay').classList.remove('active');
+        document.getElementById('app').style.display = 'block';
+        iniciarDashboard();
+      }
+    });
+  </script>
+
+</body>
+</html>
