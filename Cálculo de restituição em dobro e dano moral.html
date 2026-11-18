@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cálculo de restituição em dobro e dano moral</title>
+<style>
+:root{--bg:#f3f6f8;--card:#fff;--ink:#14232e;--mut:#5a6b78;--line:#d5dee5;--ac:#0b5c6b;--acbg:#e3f1f4;--warn:#8a4b00;--warnbg:#fff1dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a21;--card:#16252e;--ink:#e6eef3;--mut:#9bb0be;--line:#2a3d49;--ac:#5cc3d4;--acbg:#12323b;--warn:#ffc983;--warnbg:#3a2a10}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+h1{font:600 1.6rem/1.2 Georgia,"Times New Roman",serif;margin:0 0 4px}
+h2{font:600 1.1rem Georgia,serif;margin:0 0 10px}
+p.sub{color:var(--mut);margin:0 0 18px;max-width:70ch}
+section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--mut);margin-bottom:3px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+textarea{min-height:110px;font:13px/1.4 ui-monospace,Menlo,Consolas,monospace}
+button{font:inherit;font-weight:600;background:var(--ac);color:var(--card);border:0;border-radius:6px;padding:9px 16px;cursor:pointer}
+button.s{background:var(--acbg);color:var(--ac)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:12px}
+.row>div{flex:1;min-width:150px}
+.note{font-size:.82rem;color:var(--mut)}
+.st{font-size:.8rem;color:var(--mut);margin-top:4px}
+.warn{background:var(--warnbg);color:var(--warn);border-radius:6px;padding:10px 12px;margin-bottom:12px;font-size:.88rem}
+.sc{overflow-x:auto;margin-bottom:6px}
+table{border-collapse:collapse;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{background:var(--acbg);color:var(--ac);font-weight:600}
+tfoot td,tr.t td{font-weight:700;background:var(--acbg)}
+.big{font:600 1.7rem Georgia,serif;color:var(--ac)}
+details summary{cursor:pointer;font-weight:600}
+@media print{body{background:#fff;color:#000}.noprint{display:none}section{border:0;padding:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>Cálculo de restituição em dobro e dano moral</h1>
+<p class="sub">Itens b) e c) da sentença: INPC e juros de 1% a.m. até 27/08/2024; a partir de 28/08/2024, IPCA (art. 389, p. único, CC) e juros pela Selic deduzido o IPCA (art. 406, CC).</p>
+
+<section class="noprint">
+<h2>1. Índices mensais</h2>
+<p class="note">Cole as séries do Banco Central (SGS): INPC = 188, IPCA = 433, Selic acumulada no mês = 4390. Uma linha por mês, no formato <b>01/2024;0,57</b> ou <b>01/01/2024;0,57</b>. Os valores ficam salvos neste navegador.</p>
+<div class="g" style="margin-top:10px">
+<div><label for="tInpc">INPC (% ao mês)</label><textarea id="tInpc" spellcheck="false"></textarea><div class="st" id="sInpc"></div></div>
+<div><label for="tIpca">IPCA (% ao mês)</label><textarea id="tIpca" spellcheck="false"></textarea><div class="st" id="sIpca"></div></div>
+<div><label for="tSelic">Selic acumulada no mês (%)</label><textarea id="tSelic" spellcheck="false"></textarea><div class="st" id="sSelic"></div></div>
+</div>
+</section>
+
+<section class="noprint">
+<h2>2. Descontos indevidos</h2>
+<div class="row" style="margin-top:0">
+<div><label for="gVal">Valor mensal (R$)</label><input id="gVal" inputmode="decimal" placeholder="25,90"></div>
+<div><label for="gIni">Primeiro desconto</label><input id="gIni" type="month" value="2024-01"></div>
+<div><label for="gFim">Último desconto</label><input id="gFim" type="month"></div>
+<div style="flex:0"><button class="s" id="bGer" type="button">Gerar lista</button></div>
+</div>
+<label for="tDesc" style="margin-top:12px">Descontos (um por linha: <b>mm/aaaa;valor</b>). Edite livremente, valores podem variar.</label>
+<textarea id="tDesc" spellcheck="false"></textarea>
+</section>
+
+<section class="noprint">
+<h2>3. Parâmetros</h2>
+<div class="g">
+<div><label for="pFim">Data de atualização do cálculo</label><input id="pFim" type="date"></div>
+<div><label for="pEv">Evento danoso (início dos juros)</label><input id="pEv" type="date" value="2024-01-01"></div>
+<div><label for="pSent">Data da sentença</label><input id="pSent" type="date"></div>
+<div><label for="pMoral">Dano moral (R$)</label><input id="pMoral" value="3000,00" inputmode="decimal"></div>
+<div><label for="pMod">Termo inicial dos descontos</label><select id="pMod"><option value="f">Todos desde o evento danoso (texto da sentença)</option><option value="d">Cada desconto na sua própria data</option></select></div>
+<div><label for="pOff">Primeiro índice aplicado</label><select id="pOff"><option value="1">Mês seguinte ao evento</option><option value="0">Próprio mês do evento</option></select></div>
+</div>
+<div class="row"><div style="flex:0"><button id="bCalc" type="button">Calcular</button></div><div style="flex:0"><button class="s" id="bPrint" type="button">Imprimir / salvar PDF</button></div></div>
+</section>
+
+<div id="out"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const nm=(y,m)=>y*12+(m-1),N_AUG=nm(2024,8),N_SEP=nm(2024,9),END1={y:2024,m:8,d:27};
+const lab=n=>String(n%12+1).padStart(2,'0')+'/'+Math.floor(n/12);
+const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const pc=v=>(v*100).toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4})+'%';
+const fat=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:6,maximumFractionDigits:6});
+const num=s=>{s=String(s).trim();return s.includes(',')?parseFloat(s.replace(/\./g,'').replace(',','.')):parseFloat(s)};
+function parse(text){const out=[];for(const ln of text.split(/\r?\n/)){let m,y,mo,rest;
+ if(m=ln.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/)){mo=+m[2];y=+m[3]}
+ else if(m=ln.match(/(\d{1,2})\/(\d{4})/)){mo=+m[1];y=+m[2]}
+ else if(m=ln.match(/(\d{4})-(\d{2})/)){y=+m[1];mo=+m[2]}else continue;
+ rest=ln.slice(m.index+m[0].length);const v=rest.match(/-?\d+(?:[.,]\d+)*/);
+ if(!v||mo<1||mo>12)continue;const x=num(v[0]);if(!isNaN(x))out.push({n:nm(y,mo),v:x})}return out}
+const idx={inpc:{},ipca:{},selic:{}},miss=new Set();
+function load(){for(const k of['inpc','ipca','selic']){const arr=parse($('t'+k[0].toUpperCase()+k.slice(1)).value);idx[k]={};arr.forEach(a=>idx[k][a.n]=a.v);
+ const ns=arr.map(a=>a.n);$('s'+k[0].toUpperCase()+k.slice(1)).textContent=ns.length?ns.length+' meses ('+lab(Math.min(...ns))+' a '+lab(Math.max(...ns))+')':'nenhum mês carregado';}
+ try{localStorage.setItem('calc-idx',JSON.stringify({a:$('tInpc').value,b:$('tIpca').value,c:$('tSelic').value}))}catch(e){}}
+const g=(k,n)=>{const v=idx[k][n];if(v===undefined){miss.add(k.toUpperCase()+' '+lab(n));return 0}return v/100};
+function mb(a,b){let m=(b.y-a.y)*12+(b.m-a.m),d=b.d-a.d;if(d<0){m--;d+=30}return m+d/30}
+function dt(s){const p=s.split('-');return{y:+p[0],m:+p[1],d:+p[2]}}
+function calc(P,corrN,jd,off,nFin){
+ let VC=P,fI=1;const r={P};
+ for(let n=corrN;n<=N_AUG;n++){const i=g('inpc',n);fI*=1+i;VC*=1+i}
+ r.fI=fI;r.VC1=VC;r.j1=0;r.stub=0;
+ const jn=jd.y*12+jd.m-1;
+ const before=jn<N_AUG||(jn===N_AUG&&jd.d<=27);
+ if(before){r.j1=.01*mb(jd,END1)*VC;r.stub=Math.max(0,g('selic',N_AUG)-g('ipca',N_AUG))*4/31*VC}
+ const js=Math.max(N_SEP,jn+off);let fP=1,j2=0;r.rows=[];
+ for(let n=N_SEP;n<=nFin;n++){let ip=g('ipca',n),sl=g('selic',n),rate=Math.max(0,sl-ip);
+  if(n>=corrN){VC*=1+ip;fP*=1+ip}
+  const j=n>=js?rate*VC:0;j2+=j;r.rows.push({n,ip,sl,rate,C:VC,j,use:n>=js})}
+ r.fP=fP;r.VC2=VC;r.j2=j2+r.stub;r.tot=VC+r.j1+r.j2;return r}
+function agg(items){const m={};items.forEach(it=>it.rows.forEach(x=>{const o=m[x.n]||(m[x.n]={n:x.n,ip:x.ip,sl:x.sl,rate:x.rate,C:0,j:0});o.C+=x.C;o.j+=x.j}));
+ let acc=0;return Object.values(m).sort((a,b)=>a.n-b.n).map(o=>(acc+=o.j,`<tr><td>${lab(o.n)}</td><td>${pc(o.ip)}</td><td>${pc(o.sl)}</td><td>${pc(o.rate)}</td><td>${brl(o.C)}</td><td>${brl(o.j)}</td><td>${brl(acc)}</td></tr>`)).join('')}
+const mHead='<thead><tr><th>Mês</th><th>IPCA</th><th>Selic</th><th>Selic − IPCA</th><th>Base corrigida</th><th>Juros do mês</th><th>Juros acumulados</th></tr></thead>';
+function run(){
+ load();miss.clear();
+ const fin=$('pFim').value,sent=$('pSent').value;
+ if(!fin||!sent){$('out').innerHTML='<div class="warn">Informe a data de atualização e a data da sentença.</div>';return}
+ const D=parse($('tDesc').value);
+ const df=dt(fin),nFin=df.y*12+df.m-1,off=+$('pOff').value,fixed=$('pMod').value==='f',ev=dt($('pEv').value),ds=dt(sent);
+ const items=D.map(d=>{const jd=fixed?ev:{y:Math.floor(d.n/12),m:d.n%12+1,d:1};
+  const sN=fixed?ev.y*12+ev.m-1:d.n;const it=calc(d.v*2,sN+off,jd,off,nFin);it.lab=lab(d.n);it.simple=d.v;return it});
+ const mP=num($('pMoral').value)||0;
+ const mo=calc(mP,Math.max(ds.y*12+ds.m-1+off,0),ev,off,nFin);
+ const sum=(a,k)=>a.reduce((s,x)=>s+x[k],0);
+ let h='';
+ const missL=[...miss];
+ if(missL.length)h+=`<div class="warn"><b>Índices ausentes</b> (tratados como 0%): ${missL.slice(0,24).join(', ')}${missL.length>24?'…':''}. Complete as séries na etapa 1 e calcule de novo.</div>`;
+ if(!items.length)h+='<div class="warn">Nenhum desconto informado na etapa 2.</div>';
+ const R={s:sum(items,'simple'),P:sum(items,'P'),VC1:sum(items,'VC1'),j1:sum(items,'j1'),VC2:sum(items,'VC2'),j2:sum(items,'j2'),tot:sum(items,'tot')};
+ h+=`<section><h2>Resultado</h2><div class="g"><div><div class="note">Restituição em dobro</div><div class="big">${brl(R.tot)}</div></div><div><div class="note">Dano moral</div><div class="big">${brl(mo.tot)}</div></div><div><div class="note">Total geral em ${df.d.toString().padStart(2,'0')}/${String(df.m).padStart(2,'0')}/${df.y}</div><div class="big">${brl(R.tot+mo.tot)}</div></div></div></section>`;
+ h+=`<section><h2>Tabela 1 · Restituição em dobro, por desconto</h2><div class="sc"><table><thead><tr><th>Competência</th><th>Descontado</th><th>Em dobro</th><th>Fator INPC</th><th>Corrigido até 27/08/24</th><th>Juros 1% a.m.</th><th>Fator IPCA</th><th>Corrigido atual</th><th>Juros Selic − IPCA</th><th>Total</th></tr></thead><tbody>`+
+ items.map(i=>`<tr><td>${i.lab}</td><td>${brl(i.simple)}</td><td>${brl(i.P)}</td><td>${fat(i.fI)}</td><td>${brl(i.VC1)}</td><td>${brl(i.j1)}</td><td>${fat(i.fP)}</td><td>${brl(i.VC2)}</td><td>${brl(i.j2)}</td><td>${brl(i.tot)}</td></tr>`).join('')+
+ `</tbody><tfoot><tr><td>Total</td><td>${brl(R.s)}</td><td>${brl(R.P)}</td><td></td><td>${brl(R.VC1)}</td><td>${brl(R.j1)}</td><td></td><td>${brl(R.VC2)}</td><td>${brl(R.j2)}</td><td>${brl(R.tot)}</td></tr></tfoot></table></div></section>`;
+ h+=`<section><h2>Tabela 2 · Restituição: evolução mensal após 28/08/2024 (soma dos descontos)</h2><div class="sc"><table>${mHead}<tbody>`+agg(items)+`</tbody></table></div><p class="note">Os juros de agosto/2024 (28 a 31) entram proporcionalmente (4/31) na coluna de juros Selic − IPCA da Tabela 1.</p></section>`;
+ h+=`<section><h2>Tabela 3 · Dano moral</h2><div class="sc"><table><tbody>
+ <tr><td>Valor arbitrado</td><td>${brl(mo.P)}</td></tr>
+ <tr><td>Correção INPC (sentença até 08/2024), fator ${fat(mo.fI)}</td><td>${brl(mo.VC1)}</td></tr>
+ <tr><td>Juros 1% a.m. do evento até 27/08/2024</td><td>${brl(mo.j1)}</td></tr>
+ <tr><td>Correção IPCA desde 28/08/2024 (ou da sentença, se posterior), fator ${fat(mo.fP)}</td><td>${brl(mo.VC2)}</td></tr>
+ <tr><td>Juros Selic − IPCA</td><td>${brl(mo.j2)}</td></tr>
+ <tr class="t"><td>Total do dano moral</td><td>${brl(mo.tot)}</td></tr></tbody></table></div></section>`;
+ h+=`<section><h2>Tabela 4 · Dano moral: evolução mensal após 28/08/2024</h2><div class="sc"><table>${mHead}<tbody>`+agg([mo])+`</tbody></table></div></section>`;
+ h+=`<section><details><summary>Premissas do cálculo</summary><ul class="note"><li>Restituição em dobro: cada desconto é multiplicado por 2 antes da atualização.</li><li>Até 27/08/2024: correção pelo INPC acumulado e juros simples de 1% a.m. sobre o valor corrigido, com fração de mês em dias/30.</li><li>A partir de 28/08/2024: correção mensal pelo IPCA e juros mensais iguais a Selic − IPCA (mínimo zero), simples, sobre o valor corrigido do mês. Os juros da primeira fase não são capitalizados nem corrigidos.</li><li>Dano moral: correção desde a sentença (Súmula 362 do STJ). Se a sentença for posterior a 27/08/2024, a correção começa pelo IPCA no mês da sentença; os juros correm desde o evento danoso.</li><li>Granularidade mensal: índices do mês inteiro, sem pro rata dentro do mês (exceto os juros de agosto/2024).</li><li>Ferramenta de apoio: confira os índices carregados e revise o resultado antes de usá-lo em juízo.</li></ul></details></section>`;
+ $('out').innerHTML=h;$('out').scrollIntoView({behavior:'smooth'});
+}
+$('bGer').onclick=()=>{const v=num($('gVal').value),a=$('gIni').value,b=$('gFim').value;
+ if(isNaN(v)||!a||!b){alert('Informe valor mensal, primeiro e último desconto.');return}
+ let [y,m]=a.split('-').map(Number);const [y2,m2]=b.split('-').map(Number);const L=[];
+ while(y*12+m<=y2*12+m2){L.push(String(m).padStart(2,'0')+'/'+y+';'+v.toLocaleString('pt-BR',{minimumFractionDigits:2}));m++;if(m>12){m=1;y++}}
+ $('tDesc').value=L.join('\n')};
+$('bCalc').onclick=run;$('bPrint').onclick=()=>window.print();
+['tInpc','tIpca','tSelic'].forEach(i=>$(i).addEventListener('input',load));
+(function(){const t=new Date();$('pFim').value=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+ $('gFim').value=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0');
+ try{const s=JSON.parse(localStorage.getItem('calc-idx')||'null');if(s){$('tInpc').value=s.a||'';$('tIpca').value=s.b||'';$('tSelic').value=s.c||''}}catch(e){}
+ load()})();
+</script>
+</body>
+</html>
