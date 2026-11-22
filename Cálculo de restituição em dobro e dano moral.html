@@ -1,163 +1,829 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cálculo de restituição em dobro e dano moral</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de prazos – Kayo Melo Advogados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f6f8;--card:#fff;--ink:#14232e;--mut:#5a6b78;--line:#d5dee5;--ac:#0b5c6b;--acbg:#e3f1f4;--warn:#8a4b00;--warnbg:#fff1dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a21;--card:#16252e;--ink:#e6eef3;--mut:#9bb0be;--line:#2a3d49;--ac:#5cc3d4;--acbg:#12323b;--warn:#ffc983;--warnbg:#3a2a10}}
-*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
-h1{font:600 1.6rem/1.2 Georgia,"Times New Roman",serif;margin:0 0 4px}
-h2{font:600 1.1rem Georgia,serif;margin:0 0 10px}
-p.sub{color:var(--mut);margin:0 0 18px;max-width:70ch}
-section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
-.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-label{display:block;font-size:.85rem;color:var(--mut);margin-bottom:3px}
-input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
-textarea{min-height:110px;font:13px/1.4 ui-monospace,Menlo,Consolas,monospace}
-button{font:inherit;font-weight:600;background:var(--ac);color:var(--card);border:0;border-radius:6px;padding:9px 16px;cursor:pointer}
-button.s{background:var(--acbg);color:var(--ac)}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:12px}
-.row>div{flex:1;min-width:150px}
-.note{font-size:.82rem;color:var(--mut)}
-.st{font-size:.8rem;color:var(--mut);margin-top:4px}
-.warn{background:var(--warnbg);color:var(--warn);border-radius:6px;padding:10px 12px;margin-bottom:12px;font-size:.88rem}
-.sc{overflow-x:auto;margin-bottom:6px}
-table{border-collapse:collapse;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
-th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-th:first-child,td:first-child{text-align:left}
-th{background:var(--acbg);color:var(--ac);font-weight:600}
-tfoot td,tr.t td{font-weight:700;background:var(--acbg)}
-.big{font:600 1.7rem Georgia,serif;color:var(--ac)}
-details summary{cursor:pointer;font-weight:600}
-@media print{body{background:#fff;color:#000}.noprint{display:none}section{border:0;padding:0}}
+  :root{
+    --bg:#0d1420; --panel:#141d2d; --panel2:#1a2538; --line:#26334b;
+    --text:#e6eaf2; --muted:#8e9bb3; --gold:#d6b26a; --gold-ink:#1b1406;
+    --danger:#ff6b5e; --warn:#f0b64a; --ok:#4fc08d;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
+    --sans:'Instrument Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html{scroll-padding-top:12px}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+  button,input,select{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  /* Cabeçalho */
+  .topo{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-end;justify-content:space-between;
+        padding:26px clamp(16px,4vw,44px) 22px;border-bottom:1px solid var(--line);
+        background:linear-gradient(180deg,#111a2a,var(--bg))}
+  .marca h1{margin:0;font:600 clamp(26px,4vw,34px)/1.1 var(--serif);letter-spacing:-.01em}
+  .marca p{margin:6px 0 0;color:var(--gold);font-size:14px}
+  .acoes{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+  .campo{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
+  input[type=date],input[type=search],input[type=text],input[type=password],select{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-height:40px;color:var(--text)}
+  input::placeholder{color:#6c7a93}
+  .btn{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 15px;min-height:40px;cursor:pointer;font-weight:500;transition:border-color .15s,background .15s}
+  .btn:hover:not(:disabled){border-color:var(--gold)}
+  .btn:disabled{opacity:.55;cursor:progress}
+  .btn.primario{background:var(--gold);border-color:var(--gold);color:var(--gold-ink);font-weight:600}
+  .btn.primario:hover:not(:disabled){background:#e3c280}
+
+  main{max-width:1180px;margin:0 auto;padding:26px clamp(16px,4vw,44px) 70px}
+  h2.sec{font:600 20px/1.2 var(--serif);margin:0 0 4px}
+  .dica{color:var(--muted);font-size:13px;margin:0 0 12px}
+
+  /* Avisos */
+  .aviso{border:1px solid var(--line);border-left:4px solid var(--gold);background:var(--panel);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:14px}
+  .aviso.erro{border-left-color:var(--danger);background:rgba(255,107,94,.08)}
+  .aviso strong{display:block;margin-bottom:2px}
+
+  /* Régua de vencimentos */
+  .regua-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px 14px;margin-bottom:22px}
+  .regua{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+  .dia{flex:0 0 auto;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 6px 8px;
+       background:var(--panel2);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+  .dia .sem{font-size:12px;color:var(--muted)}
+  .dia .num{font:600 22px/1 var(--serif)}
+  .dia .qtd{margin-top:4px;min-width:24px;padding:1px 7px;border-radius:99px;font-size:12px;font-weight:600;background:transparent;color:var(--muted);border:1px solid var(--line)}
+  .dia.tem .qtd{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+  .dia.folga{opacity:.5}
+  .dia.hoje{border-color:var(--gold)}
+  .dia.vencidos{min-width:92px}
+  .dia.vencidos.tem .qtd{background:var(--danger);border-color:var(--danger);color:#2a0805}
+  .dia[aria-pressed=true]{background:#2a3550;border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+
+  /* Resumo */
+  .resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin-bottom:24px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;text-align:left}
+  .kpi b{display:block;font:600 30px/1.1 var(--serif)}
+  .kpi span{font-size:13px;color:var(--muted)}
+  button.kpi{cursor:pointer;border-left:4px solid var(--c,var(--line))}
+  button.kpi[aria-pressed=true]{background:#222e48;border-color:var(--c)}
+  button.kpi.erro{border-color:var(--danger)}
+  .kpi.destaque{border-color:var(--gold)}
+  .kpi.destaque b{color:var(--gold)}
+
+  /* Filtros */
+  .filtros{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:6px}
+  .filtros .busca{flex:1 1 260px}
+  .filtros .busca input{width:100%}
+
+  /* Grupos e cartões */
+  .grupo{margin-top:30px}
+  .grupo-cab{display:flex;align-items:center;gap:12px;padding:2px 0 10px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+  .grupo-cab i{width:10px;height:10px;border-radius:50%;background:var(--g)}
+  .grupo-cab h3{margin:0;font:600 20px/1.2 var(--serif)}
+  .grupo-cab span{color:var(--muted);font-size:13px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--u,var(--gold));border-radius:10px;padding:16px 18px;margin-bottom:10px;
+        display:grid;grid-template-columns:1fr auto;gap:10px 18px}
+  .card-corpo{min-width:0}
+  .selos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+  .selo{font-size:12px;font-weight:500;padding:1px 9px;border-radius:99px;border:1px solid var(--c);color:var(--c)}
+  .numero{display:inline-flex;align-items:center;gap:10px;font:500 17px/1.3 var(--mono);letter-spacing:.01em;word-break:break-all}
+  .copiar{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);font:12px var(--sans);padding:2px 8px;cursor:pointer}
+  .copiar:hover{color:var(--text);border-color:var(--gold)}
+  .meta{display:flex;flex-wrap:wrap;gap:2px 20px;margin:8px 0 0;font-size:14px;color:#c4cce0}
+  .meta b{font-weight:600;color:var(--text)}
+  .tipo{background:rgba(77,155,255,.14);color:#9cc8ff;padding:1px 8px;border-radius:5px;font-weight:500}
+  .prazo{margin:10px 0 0;padding:8px 12px;border-radius:8px;font-size:14px;background:var(--panel2)}
+  .prazo.vencido,.prazo.hoje{background:rgba(255,107,94,.13);color:#ffaaa2}
+  .prazo.breve{background:rgba(240,182,74,.13);color:#f6cf86}
+  .prazo.depois{background:rgba(79,192,141,.11);color:#8fdcb8}
+  .prazo small{color:inherit;opacity:.75}
+  .pessoas{margin:10px 0 0;padding-top:9px;border-top:1px dashed var(--line);font-size:14px;color:#aeb8cf}
+  .pessoas p{margin:3px 0}
+  details{margin-top:10px;font-size:14px}
+  summary{cursor:pointer;color:var(--gold);width:max-content}
+  .texto{margin:8px 0 0;padding:12px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;max-height:260px;overflow:auto;color:#c4cce0;font-size:13.5px;line-height:1.6;max-width:78ch}
+  .lado{display:flex;align-items:flex-start}
+  .ver{display:inline-block;background:var(--c,var(--gold));color:#10151f;font-weight:600;font-size:13px;text-decoration:none;padding:10px 16px;border-radius:8px;white-space:nowrap}
+  .ver:hover{filter:brightness(1.1)}
+
+  .vazio{text-align:center;padding:46px 18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
+  .vazio h3{margin:0 0 6px;font:600 21px var(--serif);color:var(--text)}
+  .vazio .btn{margin:14px 5px 0}
+
+  /* Diálogo */
+  dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:24px;width:min(520px,92vw)}
+  dialog::backdrop{background:rgba(5,9,16,.7)}
+  dialog h2{margin:0 0 4px;font:600 22px var(--serif)}
+  dialog .campo{margin-top:14px;font-size:13px}
+  dialog input{width:100%}
+  dialog .rodape{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+
+  #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--gold);color:var(--gold-ink);font-weight:600;padding:10px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;max-width:90vw}
+  #toast.on{opacity:1}
+
+  @media (max-width:640px){
+    .card{grid-template-columns:1fr}
+    .lado .ver{width:100%;text-align:center}
+    .acoes .btn,.acoes .campo{flex:1 1 auto}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
+
+<header class="topo">
+  <div class="marca">
+    <h1>Painel de prazos</h1>
+    <p>Kayo Melo Advogados Associados</p>
+  </div>
+  <div class="acoes">
+    <label class="campo">De <input type="date" id="dIni"></label>
+    <label class="campo">Até <input type="date" id="dFim"></label>
+    <button class="btn primario" id="btnBuscar">Buscar comunicações</button>
+    <button class="btn" id="btnPdf">Baixar relatório em PDF</button>
+    <button class="btn" id="btnCfg">Configurar webhook</button>
+  </div>
+</header>
+
 <main>
-<h1>Cálculo de restituição em dobro e dano moral</h1>
-<p class="sub">Itens b) e c) da sentença: INPC e juros de 1% a.m. até 27/08/2024; a partir de 28/08/2024, IPCA (art. 389, p. único, CC) e juros pela Selic deduzido o IPCA (art. 406, CC).</p>
+  <div id="aviso" role="status"></div>
 
-<section class="noprint">
-<h2>1. Índices mensais</h2>
-<p class="note">Cole as séries do Banco Central (SGS): INPC = 188, IPCA = 433, Selic acumulada no mês = 4390. Uma linha por mês, no formato <b>01/2024;0,57</b> ou <b>01/01/2024;0,57</b>. Os valores ficam salvos neste navegador.</p>
-<div class="g" style="margin-top:10px">
-<div><label for="tInpc">INPC (% ao mês)</label><textarea id="tInpc" spellcheck="false"></textarea><div class="st" id="sInpc"></div></div>
-<div><label for="tIpca">IPCA (% ao mês)</label><textarea id="tIpca" spellcheck="false"></textarea><div class="st" id="sIpca"></div></div>
-<div><label for="tSelic">Selic acumulada no mês (%)</label><textarea id="tSelic" spellcheck="false"></textarea><div class="st" id="sSelic"></div></div>
-</div>
-</section>
+  <section class="regua-wrap" aria-labelledby="tRegua">
+    <h2 class="sec" id="tRegua">Vencimentos nos próximos 14 dias</h2>
+    <p class="dica">Datas estimadas a partir do prazo encontrado no texto de cada comunicação. Clique num dia para filtrar.</p>
+    <div class="regua" id="regua"></div>
+  </section>
 
-<section class="noprint">
-<h2>2. Descontos indevidos</h2>
-<div class="row" style="margin-top:0">
-<div><label for="gVal">Valor mensal (R$)</label><input id="gVal" inputmode="decimal" placeholder="25,90"></div>
-<div><label for="gIni">Primeiro desconto</label><input id="gIni" type="month" value="2024-01"></div>
-<div><label for="gFim">Último desconto</label><input id="gFim" type="month"></div>
-<div style="flex:0"><button class="s" id="bGer" type="button">Gerar lista</button></div>
-</div>
-<label for="tDesc" style="margin-top:12px">Descontos (um por linha: <b>mm/aaaa;valor</b>). Edite livremente, valores podem variar.</label>
-<textarea id="tDesc" spellcheck="false"></textarea>
-</section>
+  <section class="resumo" id="resumo" aria-label="Resumo"></section>
 
-<section class="noprint">
-<h2>3. Parâmetros</h2>
-<div class="g">
-<div><label for="pFim">Data de atualização do cálculo</label><input id="pFim" type="date"></div>
-<div><label for="pEv">Evento danoso (início dos juros)</label><input id="pEv" type="date" value="2024-01-01"></div>
-<div><label for="pSent">Data da sentença</label><input id="pSent" type="date"></div>
-<div><label for="pMoral">Dano moral (R$)</label><input id="pMoral" value="3000,00" inputmode="decimal"></div>
-<div><label for="pMod">Termo inicial dos descontos</label><select id="pMod"><option value="f">Todos desde o evento danoso (texto da sentença)</option><option value="d">Cada desconto na sua própria data</option></select></div>
-<div><label for="pOff">Primeiro índice aplicado</label><select id="pOff"><option value="1">Mês seguinte ao evento</option><option value="0">Próprio mês do evento</option></select></div>
-</div>
-<div class="row"><div style="flex:0"><button id="bCalc" type="button">Calcular</button></div><div style="flex:0"><button class="s" id="bPrint" type="button">Imprimir / salvar PDF</button></div></div>
-</section>
+  <section class="filtros" aria-label="Filtros">
+    <label class="campo busca">Buscar na lista
+      <input type="search" id="fTexto" placeholder="Número do processo, parte, advogado ou órgão">
+    </label>
+    <label class="campo">Tipo
+      <select id="fTipo"><option value="">Todos os tipos</option></select>
+    </label>
+    <label class="campo">Agrupar por
+      <select id="fAgrupar">
+        <option value="urgencia">Urgência do prazo</option>
+        <option value="data">Data de disponibilização</option>
+        <option value="tribunal">Tribunal</option>
+        <option value="tipo">Tipo de comunicação</option>
+      </select>
+    </label>
+    <button class="btn" id="btnLimpar">Limpar filtros</button>
+  </section>
 
-<div id="out"></div>
+  <section id="lista" aria-live="polite"></section>
 </main>
+
+<dialog id="dlgCfg">
+  <form method="dialog" id="formCfg">
+    <h2>Conexão com o webhook</h2>
+    <p class="dica">O painel faz uma requisição GET para esta URL, enviando <code>dataInicio</code> e <code>dataFim</code> (aaaa-mm-dd).</p>
+    <label class="campo">URL do webhook (n8n)
+      <input type="text" id="cUrl" placeholder="https://seu-n8n.com/webhook/prazos" autocomplete="off">
+    </label>
+    <label class="campo">Nome do cabeçalho de autenticação (opcional)
+      <input type="text" id="cCab" placeholder="X-Api-Key" autocomplete="off">
+    </label>
+    <label class="campo">Valor do cabeçalho (opcional)
+      <input type="password" id="cVal" autocomplete="off">
+    </label>
+    <div class="rodape">
+      <button class="btn" value="cancel" type="button" id="cCancelar">Cancelar</button>
+      <button class="btn primario" type="submit" id="cSalvar">Salvar e buscar</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-const $=id=>document.getElementById(id);
-const nm=(y,m)=>y*12+(m-1),N_AUG=nm(2024,8),N_SEP=nm(2024,9),END1={y:2024,m:8,d:27};
-const lab=n=>String(n%12+1).padStart(2,'0')+'/'+Math.floor(n/12);
-const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const pc=v=>(v*100).toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4})+'%';
-const fat=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:6,maximumFractionDigits:6});
-const num=s=>{s=String(s).trim();return s.includes(',')?parseFloat(s.replace(/\./g,'').replace(',','.')):parseFloat(s)};
-function parse(text){const out=[];for(const ln of text.split(/\r?\n/)){let m,y,mo,rest;
- if(m=ln.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/)){mo=+m[2];y=+m[3]}
- else if(m=ln.match(/(\d{1,2})\/(\d{4})/)){mo=+m[1];y=+m[2]}
- else if(m=ln.match(/(\d{4})-(\d{2})/)){y=+m[1];mo=+m[2]}else continue;
- rest=ln.slice(m.index+m[0].length);const v=rest.match(/-?\d+(?:[.,]\d+)*/);
- if(!v||mo<1||mo>12)continue;const x=num(v[0]);if(!isNaN(x))out.push({n:nm(y,mo),v:x})}return out}
-const idx={inpc:{},ipca:{},selic:{}},miss=new Set();
-function load(){for(const k of['inpc','ipca','selic']){const arr=parse($('t'+k[0].toUpperCase()+k.slice(1)).value);idx[k]={};arr.forEach(a=>idx[k][a.n]=a.v);
- const ns=arr.map(a=>a.n);$('s'+k[0].toUpperCase()+k.slice(1)).textContent=ns.length?ns.length+' meses ('+lab(Math.min(...ns))+' a '+lab(Math.max(...ns))+')':'nenhum mês carregado';}
- try{localStorage.setItem('calc-idx',JSON.stringify({a:$('tInpc').value,b:$('tIpca').value,c:$('tSelic').value}))}catch(e){}}
-const g=(k,n)=>{const v=idx[k][n];if(v===undefined){miss.add(k.toUpperCase()+' '+lab(n));return 0}return v/100};
-function mb(a,b){let m=(b.y-a.y)*12+(b.m-a.m),d=b.d-a.d;if(d<0){m--;d+=30}return m+d/30}
-function dt(s){const p=s.split('-');return{y:+p[0],m:+p[1],d:+p[2]}}
-function calc(P,corrN,jd,off,nFin){
- let VC=P,fI=1;const r={P};
- for(let n=corrN;n<=N_AUG;n++){const i=g('inpc',n);fI*=1+i;VC*=1+i}
- r.fI=fI;r.VC1=VC;r.j1=0;r.stub=0;
- const jn=jd.y*12+jd.m-1;
- const before=jn<N_AUG||(jn===N_AUG&&jd.d<=27);
- if(before){r.j1=.01*mb(jd,END1)*VC;r.stub=Math.max(0,g('selic',N_AUG)-g('ipca',N_AUG))*4/31*VC}
- const js=Math.max(N_SEP,jn+off);let fP=1,j2=0;r.rows=[];
- for(let n=N_SEP;n<=nFin;n++){let ip=g('ipca',n),sl=g('selic',n),rate=Math.max(0,sl-ip);
-  if(n>=corrN){VC*=1+ip;fP*=1+ip}
-  const j=n>=js?rate*VC:0;j2+=j;r.rows.push({n,ip,sl,rate,C:VC,j,use:n>=js})}
- r.fP=fP;r.VC2=VC;r.j2=j2+r.stub;r.tot=VC+r.j1+r.j2;return r}
-function agg(items){const m={};items.forEach(it=>it.rows.forEach(x=>{const o=m[x.n]||(m[x.n]={n:x.n,ip:x.ip,sl:x.sl,rate:x.rate,C:0,j:0});o.C+=x.C;o.j+=x.j}));
- let acc=0;return Object.values(m).sort((a,b)=>a.n-b.n).map(o=>(acc+=o.j,`<tr><td>${lab(o.n)}</td><td>${pc(o.ip)}</td><td>${pc(o.sl)}</td><td>${pc(o.rate)}</td><td>${brl(o.C)}</td><td>${brl(o.j)}</td><td>${brl(acc)}</td></tr>`)).join('')}
-const mHead='<thead><tr><th>Mês</th><th>IPCA</th><th>Selic</th><th>Selic − IPCA</th><th>Base corrigida</th><th>Juros do mês</th><th>Juros acumulados</th></tr></thead>';
-function run(){
- load();miss.clear();
- const fin=$('pFim').value,sent=$('pSent').value;
- if(!fin||!sent){$('out').innerHTML='<div class="warn">Informe a data de atualização e a data da sentença.</div>';return}
- const D=parse($('tDesc').value);
- const df=dt(fin),nFin=df.y*12+df.m-1,off=+$('pOff').value,fixed=$('pMod').value==='f',ev=dt($('pEv').value),ds=dt(sent);
- const items=D.map(d=>{const jd=fixed?ev:{y:Math.floor(d.n/12),m:d.n%12+1,d:1};
-  const sN=fixed?ev.y*12+ev.m-1:d.n;const it=calc(d.v*2,sN+off,jd,off,nFin);it.lab=lab(d.n);it.simple=d.v;return it});
- const mP=num($('pMoral').value)||0;
- const mo=calc(mP,Math.max(ds.y*12+ds.m-1+off,0),ev,off,nFin);
- const sum=(a,k)=>a.reduce((s,x)=>s+x[k],0);
- let h='';
- const missL=[...miss];
- if(missL.length)h+=`<div class="warn"><b>Índices ausentes</b> (tratados como 0%): ${missL.slice(0,24).join(', ')}${missL.length>24?'…':''}. Complete as séries na etapa 1 e calcule de novo.</div>`;
- if(!items.length)h+='<div class="warn">Nenhum desconto informado na etapa 2.</div>';
- const R={s:sum(items,'simple'),P:sum(items,'P'),VC1:sum(items,'VC1'),j1:sum(items,'j1'),VC2:sum(items,'VC2'),j2:sum(items,'j2'),tot:sum(items,'tot')};
- h+=`<section><h2>Resultado</h2><div class="g"><div><div class="note">Restituição em dobro</div><div class="big">${brl(R.tot)}</div></div><div><div class="note">Dano moral</div><div class="big">${brl(mo.tot)}</div></div><div><div class="note">Total geral em ${df.d.toString().padStart(2,'0')}/${String(df.m).padStart(2,'0')}/${df.y}</div><div class="big">${brl(R.tot+mo.tot)}</div></div></div></section>`;
- h+=`<section><h2>Tabela 1 · Restituição em dobro, por desconto</h2><div class="sc"><table><thead><tr><th>Competência</th><th>Descontado</th><th>Em dobro</th><th>Fator INPC</th><th>Corrigido até 27/08/24</th><th>Juros 1% a.m.</th><th>Fator IPCA</th><th>Corrigido atual</th><th>Juros Selic − IPCA</th><th>Total</th></tr></thead><tbody>`+
- items.map(i=>`<tr><td>${i.lab}</td><td>${brl(i.simple)}</td><td>${brl(i.P)}</td><td>${fat(i.fI)}</td><td>${brl(i.VC1)}</td><td>${brl(i.j1)}</td><td>${fat(i.fP)}</td><td>${brl(i.VC2)}</td><td>${brl(i.j2)}</td><td>${brl(i.tot)}</td></tr>`).join('')+
- `</tbody><tfoot><tr><td>Total</td><td>${brl(R.s)}</td><td>${brl(R.P)}</td><td></td><td>${brl(R.VC1)}</td><td>${brl(R.j1)}</td><td></td><td>${brl(R.VC2)}</td><td>${brl(R.j2)}</td><td>${brl(R.tot)}</td></tr></tfoot></table></div></section>`;
- h+=`<section><h2>Tabela 2 · Restituição: evolução mensal após 28/08/2024 (soma dos descontos)</h2><div class="sc"><table>${mHead}<tbody>`+agg(items)+`</tbody></table></div><p class="note">Os juros de agosto/2024 (28 a 31) entram proporcionalmente (4/31) na coluna de juros Selic − IPCA da Tabela 1.</p></section>`;
- h+=`<section><h2>Tabela 3 · Dano moral</h2><div class="sc"><table><tbody>
- <tr><td>Valor arbitrado</td><td>${brl(mo.P)}</td></tr>
- <tr><td>Correção INPC (sentença até 08/2024), fator ${fat(mo.fI)}</td><td>${brl(mo.VC1)}</td></tr>
- <tr><td>Juros 1% a.m. do evento até 27/08/2024</td><td>${brl(mo.j1)}</td></tr>
- <tr><td>Correção IPCA desde 28/08/2024 (ou da sentença, se posterior), fator ${fat(mo.fP)}</td><td>${brl(mo.VC2)}</td></tr>
- <tr><td>Juros Selic − IPCA</td><td>${brl(mo.j2)}</td></tr>
- <tr class="t"><td>Total do dano moral</td><td>${brl(mo.tot)}</td></tr></tbody></table></div></section>`;
- h+=`<section><h2>Tabela 4 · Dano moral: evolução mensal após 28/08/2024</h2><div class="sc"><table>${mHead}<tbody>`+agg([mo])+`</tbody></table></div></section>`;
- h+=`<section><details><summary>Premissas do cálculo</summary><ul class="note"><li>Restituição em dobro: cada desconto é multiplicado por 2 antes da atualização.</li><li>Até 27/08/2024: correção pelo INPC acumulado e juros simples de 1% a.m. sobre o valor corrigido, com fração de mês em dias/30.</li><li>A partir de 28/08/2024: correção mensal pelo IPCA e juros mensais iguais a Selic − IPCA (mínimo zero), simples, sobre o valor corrigido do mês. Os juros da primeira fase não são capitalizados nem corrigidos.</li><li>Dano moral: correção desde a sentença (Súmula 362 do STJ). Se a sentença for posterior a 27/08/2024, a correção começa pelo IPCA no mês da sentença; os juros correm desde o evento danoso.</li><li>Granularidade mensal: índices do mês inteiro, sem pro rata dentro do mês (exceto os juros de agosto/2024).</li><li>Ferramenta de apoio: confira os índices carregados e revise o resultado antes de usá-lo em juízo.</li></ul></details></section>`;
- $('out').innerHTML=h;$('out').scrollIntoView({behavior:'smooth'});
+(() => {
+'use strict';
+
+/* ============================ CONFIGURAÇÃO ============================ */
+// URL fixa do webhook no n8n. Também pode ser alterada pelo botão "Configurar webhook".
+const WEBHOOK_PADRAO = 'https://n8n-n8n.njqmsx.easypanel.host/webhook/prazos';
+const CHAVE_CFG = 'kma_prazos_cfg_v1';
+const ESCRITORIO = 'Kayo Melo Advogados Associados';
+
+const BUSCAS = {
+  oab:      { rotulo: 'OAB 12873/RN',       cor: '#4d9bff' },
+  parte:    { rotulo: 'Nome como parte',    cor: '#c27be0' },
+  advogado: { rotulo: 'Nome como advogado', cor: '#3fc5b0' },
+  outra:    { rotulo: 'Origem não informada', cor: '#8e9bb3' },
+};
+
+const URG = {
+  vencido: { rotulo: 'Vencidos',                          cor: '#ff6b5e', ordem: 0 },
+  hoje:    { rotulo: 'Vencem hoje',                       cor: '#ff8a4c', ordem: 1 },
+  breve:   { rotulo: 'Vencem em até 5 dias',              cor: '#f0b64a', ordem: 2 },
+  depois:  { rotulo: 'Vencem depois',                     cor: '#4fc08d', ordem: 3 },
+  sem:     { rotulo: 'Sem prazo identificado no texto',   cor: '#8e9bb3', ordem: 4 },
+};
+const DOURADO = '#d6b26a';
+
+/* ============================ UTILITÁRIOS ============================ */
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\s+/g,' ').trim();
+const p2 = (n) => String(n).padStart(2,'0');
+const fmt = (d) => `${p2(d.getDate())}/${p2(d.getMonth()+1)}/${d.getFullYear()}`;
+const chaveDia = (d) => `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;
+const hoje = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); };
+const somaDias = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const diffDias = (a, b) => Math.round((a - b) / 864e5);
+
+function parseData(s) {
+  if (!s) return null;
+  s = String(s).trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+  m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
+  return null;
 }
-$('bGer').onclick=()=>{const v=num($('gVal').value),a=$('gIni').value,b=$('gFim').value;
- if(isNaN(v)||!a||!b){alert('Informe valor mensal, primeiro e último desconto.');return}
- let [y,m]=a.split('-').map(Number);const [y2,m2]=b.split('-').map(Number);const L=[];
- while(y*12+m<=y2*12+m2){L.push(String(m).padStart(2,'0')+'/'+y+';'+v.toLocaleString('pt-BR',{minimumFractionDigits:2}));m++;if(m>12){m=1;y++}}
- $('tDesc').value=L.join('\n')};
-$('bCalc').onclick=run;$('bPrint').onclick=()=>window.print();
-['tInpc','tIpca','tSelic'].forEach(i=>$(i).addEventListener('input',load));
-(function(){const t=new Date();$('pFim').value=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
- $('gFim').value=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0');
- try{const s=JSON.parse(localStorage.getItem('calc-idx')||'null');if(s){$('tInpc').value=s.a||'';$('tIpca').value=s.b||'';$('tSelic').value=s.c||''}}catch(e){}
- load()})();
+
+function limparTexto(s) {
+  if (!s) return '';
+  const doc = new DOMParser().parseFromString(String(s), 'text/html');
+  return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+}
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('on'), 3200);
+}
+
+/* ============================ CÁLCULO DE PRAZOS ============================ */
+// Estimativa: considera fins de semana, feriados nacionais fixos e o recesso de 20/12 a 20/01 (CPC, art. 220).
+// Não considera Carnaval, Sexta-feira Santa, Corpus Christi nem feriados estaduais/municipais.
+const FERIADOS_FIXOS = ['01-01','04-21','05-01','09-07','10-12','11-02','11-15','11-20','12-25'];
+const emRecesso = (d) => (d.getMonth() === 11 && d.getDate() >= 20) || (d.getMonth() === 0 && d.getDate() <= 20);
+function diaUtil(d) {
+  const w = d.getDay();
+  if (w === 0 || w === 6) return false;
+  if (FERIADOS_FIXOS.includes(`${p2(d.getMonth()+1)}-${p2(d.getDate())}`)) return false;
+  if (emRecesso(d)) return false;
+  return true;
+}
+function proxUtil(d) { let x = somaDias(d, 1); while (!diaUtil(x)) x = somaDias(x, 1); return x; }
+
+function calcularVencimento(disponibilizacao, prazo) {
+  const publicacao = proxUtil(disponibilizacao);     // 1º dia útil após a disponibilização
+  let d = new Date(publicacao), c = 0;
+  while (c < prazo.n) {
+    d = somaDias(d, 1);
+    if (prazo.uteis ? diaUtil(d) : !emRecesso(d)) c++;
+  }
+  while (!diaUtil(d)) d = somaDias(d, 1);            // vencimento em dia sem expediente vai para o próximo dia útil
+  return d;
+}
+
+const RE_PRAZO = /prazo[^.\n]{0,60}?(\d{1,3})\s*(?:\([^)]{0,40}\)\s*)?(dias?|horas?)(?:\s+(úteis|uteis|corridos))?/i;
+function extrairPrazo(texto) {
+  const m = String(texto || '').match(RE_PRAZO);
+  if (!m) return null;
+  let n = parseInt(m[1], 10);
+  if (!n) return null;
+  const horas = /^hora/i.test(m[2]);
+  if (horas) return { n: Math.ceil(n / 24), uteis: false, rotulo: `${n} horas` };
+  const corridos = /corridos/i.test(m[3] || '');
+  return { n, uteis: !corridos, rotulo: `${n} ${n === 1 ? 'dia' : 'dias'} ${corridos ? 'corridos' : 'úteis'}` };
+}
+
+function classificar(it) {
+  if (!it.venc) return 'sem';
+  const d = diffDias(it.venc, hoje());
+  if (d < 0) return 'vencido';
+  if (d === 0) return 'hoje';
+  if (d <= 5) return 'breve';
+  return 'depois';
+}
+function textoVenc(it) {
+  const d = diffDias(it.venc, hoje());
+  const rel = d === 0 ? 'vence hoje' : d > 0 ? `vence em ${d} ${d === 1 ? 'dia' : 'dias'}` : `venceu há ${-d} ${-d === 1 ? 'dia' : 'dias'}`;
+  return `${fmt(it.venc)} (${rel})`;
+}
+
+/* ============================ NORMALIZAÇÃO DOS DADOS ============================ */
+const pareceComunicacao = (o) => o && typeof o === 'object' && ('numero_processo' in o || 'numeroprocessocommascara' in o || 'siglaTribunal' in o);
+
+// Aceita: lista de comunicações, {items:[]}, {oab:[],parte:[],advogado:[]}, {comunicacoes:[]} e listas de páginas.
+function extrairItens(payload) {
+  const saida = [];
+  const visita = (n, origem) => {
+    if (Array.isArray(n)) { n.forEach((x) => visita(x, origem)); return; }
+    if (!n || typeof n !== 'object') return;
+    if (pareceComunicacao(n)) { saida.push({ p: n, origem }); return; }
+    if (n.json) visita(n.json, origem);
+    if (Array.isArray(n.items)) visita(n.items, origem);
+    if (Array.isArray(n.comunicacoes)) visita(n.comunicacoes, origem);
+    for (const k of ['oab', 'parte', 'advogado']) if (k in n) visita(n[k], k);
+  };
+  visita(payload, 'outra');
+  return saida;
+}
+
+const chaveDe = (p) => String(p.id ?? p.hash ?? `${p.numero_processo}|${p.data_disponibilizacao}|${p.tipoComunicacao}|${String(p.texto || '').slice(0, 80)}`);
+
+function extrairPartes(p, texto) {
+  if (Array.isArray(p.destinatarios) && p.destinatarios.length) {
+    const polos = { A: 'polo ativo', P: 'polo passivo' };
+    return p.destinatarios.map((d) => `${d.nome || ''}${d.polo ? ' (' + (polos[d.polo] || d.polo) + ')' : ''}`).filter(Boolean).join('; ');
+  }
+  const m = String(texto || '').match(/(AUTOR|RÉU|REQUERENTE|REQUERIDO|AGRAVANTE|AGRAVADO):\s*(.+?)(?=\s*(ADVOGADO|PÁGINA|VISTOS|$))/i);
+  if (m && m[2]) return m[2].trim();
+  return 'Consultar diretamente no processo';
+}
+function extrairAdvogados(p) {
+  if (!Array.isArray(p.destinatarioadvogados) || !p.destinatarioadvogados.length) return '';
+  const nomes = p.destinatarioadvogados.map((x) => {
+    const a = x.advogado || x;
+    const oab = a.numero_oab ? ` (OAB ${a.numero_oab}${a.uf_oab ? '/' + a.uf_oab : ''})` : '';
+    return (a.nome || '') + oab;
+  }).filter(Boolean);
+  return [...new Set(nomes)].join('; ');
+}
+
+function normalizar(p, k) {
+  const texto = limparTexto(p.texto);
+  const disp = parseData(p.data_disponibilizacao);
+  const prazo = extrairPrazo(texto);
+  const it = {
+    key: k,
+    numero: p.numeroprocessocommascara || p.numero_processo || 'Processo s/n',
+    numeroPuro: String(p.numero_processo || '').replace(/\D/g, ''),
+    orgao: p.nomeOrgao || 'Não informado',
+    tribunal: p.siglaTribunal || '',
+    disp,
+    tipo: p.tipoComunicacao || 'Não informado',
+    meio: p.meiocompleto || p.meioCompleto || 'Diário de Justiça Eletrônico',
+    link: /^https?:\/\//i.test(p.link || '') ? p.link : '',
+    partes: extrairPartes(p, texto),
+    advogados: extrairAdvogados(p),
+    texto, prazo,
+    venc: prazo && disp ? calcularVencimento(disp, prazo) : null,
+    origens: [],
+  };
+  it.busca = norm([it.numero, it.numeroPuro, it.orgao, it.tribunal, it.tipo, it.partes, it.advogados].join(' '));
+  it.urg = classificar(it);
+  return it;
+}
+
+function consolidar(payload) {
+  const mapa = new Map();
+  for (const { p, origem } of extrairItens(payload)) {
+    const k = chaveDe(p);
+    const origens = Array.isArray(p.origens) && p.origens.length ? p.origens : [origem];
+    if (!mapa.has(k)) mapa.set(k, normalizar(p, k));
+    const it = mapa.get(k);
+    origens.forEach((o) => { const ok = BUSCAS[o] ? o : 'outra'; if (!it.origens.includes(ok)) it.origens.push(ok); });
+  }
+  const itens = [...mapa.values()];
+  itens.forEach((it) => { if (it.origens.length > 1) it.origens = it.origens.filter((o) => o !== 'outra'); });
+  return itens;
+}
+
+/* ============================ ESTADO ============================ */
+const estado = {
+  itens: [],
+  erros: {},
+  carregadoEm: null,
+  demo: false,
+  agrupar: 'urgencia',
+  filtros: { texto: '', tipo: '', buscas: new Set(), dia: null },
+};
+
+function lerCfg() {
+  let c = {};
+  try { c = JSON.parse(localStorage.getItem(CHAVE_CFG) || '{}'); } catch (e) { c = {}; }
+  return { url: c.url || WEBHOOK_PADRAO, cab: c.cab || '', val: c.val || '' };
+}
+function salvarCfg(c) { try { localStorage.setItem(CHAVE_CFG, JSON.stringify(c)); } catch (e) { /* sem armazenamento */ } }
+
+/* ============================ FILTRO E AGRUPAMENTO ============================ */
+function filtrados() {
+  const { texto, tipo, buscas, dia } = estado.filtros;
+  const q = norm(texto);
+  const qDigitos = texto.replace(/\D/g, '');
+  return estado.itens.filter((it) => {
+    if (buscas.size && !it.origens.some((o) => buscas.has(o))) return false;
+    if (tipo && it.tipo !== tipo) return false;
+    if (dia) {
+      if (dia === 'vencidos') { if (it.urg !== 'vencido') return false; }
+      else if (!it.venc || chaveDia(it.venc) !== dia) return false;
+    }
+    if (q && !(it.busca.includes(q) || (qDigitos.length >= 6 && it.numeroPuro.includes(qDigitos)))) return false;
+    return true;
+  });
+}
+
+function ordenarItens(a, b) {
+  if (a.venc && b.venc && a.venc - b.venc) return a.venc - b.venc;
+  if (a.venc && !b.venc) return -1;
+  if (!a.venc && b.venc) return 1;
+  if (a.disp && b.disp && a.disp - b.disp) return b.disp - a.disp;
+  return a.numero.localeCompare(b.numero);
+}
+
+function agrupar(itens, modo) {
+  const mapa = new Map();
+  const add = (chave, titulo, cor, ordem, it) => {
+    if (!mapa.has(chave)) mapa.set(chave, { chave, titulo, cor, ordem, itens: [] });
+    mapa.get(chave).itens.push(it);
+  };
+  for (const it of itens) {
+    if (modo === 'urgencia') { const u = URG[it.urg]; add(it.urg, u.rotulo, u.cor, u.ordem, it); }
+    else if (modo === 'data') add(it.disp ? chaveDia(it.disp) : 'sem', it.disp ? `Disponibilizadas em ${fmt(it.disp)}` : 'Sem data de disponibilização', DOURADO, it.disp ? -it.disp.getTime() : 1e15, it);
+    else if (modo === 'tribunal') { const t = it.tribunal || 'Tribunal não informado'; add(t, t, DOURADO, t, it); }
+    else add(it.tipo, it.tipo, DOURADO, it.tipo, it);
+  }
+  const gs = [...mapa.values()];
+  gs.sort((a, b) => typeof a.ordem === 'number' ? a.ordem - b.ordem : String(a.ordem).localeCompare(String(b.ordem), 'pt-BR'));
+  gs.forEach((g) => g.itens.sort(ordenarItens));
+  return gs;
+}
+
+/* ============================ RENDERIZAÇÃO ============================ */
+function cardHTML(it) {
+  const u = URG[it.urg];
+  const selos = it.origens.map((o) => `<span class="selo" style="--c:${BUSCAS[o].cor}">${esc(BUSCAS[o].rotulo)}</span>`).join('');
+  const prazo = it.prazo && it.venc
+    ? `<p class="prazo ${it.urg}"><strong>Prazo de ${esc(it.prazo.rotulo)}.</strong> Vencimento estimado: ${esc(textoVenc(it))} <small>– confira no processo</small></p>`
+    : `<p class="prazo">Nenhum prazo identificado no texto. Abra a comunicação para conferir.</p>`;
+  const cor = BUSCAS[it.origens[0]]?.cor || DOURADO;
+  return `
+  <article class="card" style="--u:${u.cor}">
+    <div class="card-corpo">
+      <div class="selos">${selos}</div>
+      <div class="numero">${esc(it.numero)} <button class="copiar" type="button" data-copiar="${esc(it.numero)}">Copiar</button></div>
+      <div class="meta">
+        <span><b>Órgão:</b> ${esc(it.orgao)}${it.tribunal ? ' (' + esc(it.tribunal) + ')' : ''}</span>
+        <span><b>Disponibilizada em:</b> ${it.disp ? fmt(it.disp) : 'N/A'}</span>
+        <span><b>Tipo:</b> <span class="tipo">${esc(it.tipo)}</span></span>
+        <span><b>Meio:</b> ${esc(it.meio)}</span>
+      </div>
+      ${prazo}
+      <div class="pessoas">
+        <p><b>Parte(s):</b> ${esc(it.partes)}</p>
+        ${it.advogados ? `<p><b>Advogado(s):</b> ${esc(it.advogados)}</p>` : ''}
+      </div>
+      ${it.texto ? `<details><summary>Ler texto da comunicação</summary><div class="texto">${esc(it.texto)}</div></details>` : ''}
+    </div>
+    <div class="lado">${it.link ? `<a class="ver" style="--c:${cor}" href="${esc(it.link)}" target="_blank" rel="noopener noreferrer">Ver no PJe</a>` : ''}</div>
+  </article>`;
+}
+
+function renderRegua() {
+  const h = hoje();
+  const venc = estado.itens.filter((i) => i.urg === 'vencido').length;
+  const cont = new Map();
+  estado.itens.forEach((i) => { if (i.venc) { const k = chaveDia(i.venc); cont.set(k, (cont.get(k) || 0) + 1); } });
+  const sel = estado.filtros.dia;
+  let html = `<button type="button" class="dia vencidos ${venc ? 'tem' : ''}" data-dia="vencidos" aria-pressed="${sel === 'vencidos'}"><span class="sem">Vencidos</span><span class="num">&#8203;</span><span class="qtd">${venc}</span></button>`;
+  for (let i = 0; i < 14; i++) {
+    const d = somaDias(h, i), k = chaveDia(d), n = cont.get(k) || 0;
+    const sem = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+    html += `<button type="button" class="dia ${n ? 'tem' : ''} ${diaUtil(d) ? '' : 'folga'} ${i === 0 ? 'hoje' : ''}" data-dia="${k}" aria-pressed="${sel === k}" aria-label="${fmt(d)}: ${n} vencimento(s)"><span class="sem">${i === 0 ? 'hoje' : sem}</span><span class="num">${d.getDate()}</span><span class="qtd">${n}</span></button>`;
+  }
+  $('#regua').innerHTML = html;
+}
+
+function renderResumo() {
+  const itens = estado.itens;
+  const por = (o) => itens.filter((i) => i.origens.includes(o)).length;
+  const atencao = itens.filter((i) => ['vencido', 'hoje', 'breve'].includes(i.urg)).length;
+  const comPrazo = itens.filter((i) => i.prazo).length;
+  const kBusca = ['oab', 'parte', 'advogado'].map((o) => {
+    const erro = estado.erros[o];
+    return `<button type="button" class="kpi ${erro ? 'erro' : ''}" style="--c:${BUSCAS[o].cor}" data-busca="${o}" aria-pressed="${estado.filtros.buscas.has(o)}">
+      <b>${erro ? '!' : por(o)}</b><span>${esc(BUSCAS[o].rotulo)}${erro ? ' – consulta falhou' : ''}</span></button>`;
+  }).join('');
+  $('#resumo').innerHTML = `
+    <div class="kpi"><b>${itens.length}</b><span>Comunicações, sem repetição</span></div>
+    ${kBusca}
+    <div class="kpi"><b>${comPrazo}</b><span>Com prazo identificado</span></div>
+    <div class="kpi destaque"><b>${atencao}</b><span>Vencidos ou vencendo em até 5 dias</span></div>`;
+}
+
+function renderTipos() {
+  const sel = $('#fTipo'), atual = estado.filtros.tipo;
+  const tipos = [...new Set(estado.itens.map((i) => i.tipo))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  sel.innerHTML = '<option value="">Todos os tipos</option>' + tipos.map((t) => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  sel.value = tipos.includes(atual) ? atual : '';
+  estado.filtros.tipo = sel.value;
+}
+
+function renderLista() {
+  const box = $('#lista');
+  if (!estado.itens.length) {
+    box.innerHTML = `<div class="vazio"><h3>Nenhuma comunicação carregada</h3>
+      <p>Escolha o período e busque no webhook. Para conhecer o painel antes de conectar, abra os dados de exemplo.</p>
+      <button class="btn primario" data-acao="buscar">Buscar comunicações</button>
+      <button class="btn" data-acao="demo">Ver dados de exemplo</button></div>`;
+    return;
+  }
+  const itens = filtrados();
+  if (!itens.length) {
+    box.innerHTML = `<div class="vazio"><h3>Nada encontrado com esses filtros</h3><p>Ajuste a busca ou limpe os filtros para ver as ${estado.itens.length} comunicações.</p><button class="btn" data-acao="limpar">Limpar filtros</button></div>`;
+    return;
+  }
+  const grupos = agrupar(itens, estado.agrupar);
+  box.innerHTML = grupos.map((g) => `
+    <section class="grupo">
+      <div class="grupo-cab" style="--g:${g.cor}"><i></i><h3>${esc(g.titulo)}</h3><span>${g.itens.length} ${g.itens.length === 1 ? 'comunicação' : 'comunicações'}</span></div>
+      ${g.itens.map(cardHTML).join('')}
+    </section>`).join('');
+}
+
+function renderAviso() {
+  const box = $('#aviso');
+  const falhas = Object.entries(estado.erros).filter(([, v]) => v).map(([k, v]) => `${BUSCAS[k]?.rotulo || k}: ${v}`);
+  let html = '';
+  if (estado.demo) html += `<div class="aviso"><strong>Você está vendo dados de exemplo.</strong>Nomes, processos e prazos são fictícios. Configure o webhook para ver as comunicações reais.</div>`;
+  if (falhas.length) html += `<div class="aviso erro"><strong>Uma ou mais buscas falharam hoje.</strong>${esc(falhas.join(' | '))}. Confira manualmente no Comunica PJe.</div>`;
+  if (estado.carregadoEm && !estado.demo) html += `<p class="dica">Atualizado em ${estado.carregadoEm.toLocaleString('pt-BR')}.</p>`;
+  box.innerHTML = html;
+}
+
+function render() {
+  renderAviso();
+  renderRegua();
+  renderResumo();
+  renderLista();
+}
+
+function aplicarPayload(payload, demo) {
+  const raiz = Array.isArray(payload) ? payload[0] : payload;
+  estado.erros = (raiz && typeof raiz === 'object' && raiz.erros && typeof raiz.erros === 'object') ? raiz.erros : {};
+  estado.itens = consolidar(payload);
+  estado.demo = !!demo;
+  estado.carregadoEm = new Date();
+  estado.filtros = { texto: '', tipo: '', buscas: new Set(), dia: null };
+  $('#fTexto').value = '';
+  renderTipos();
+  render();
+}
+
+/* ============================ BUSCA NO WEBHOOK ============================ */
+function mostrarErro(titulo, detalhe) {
+  $('#aviso').innerHTML = `<div class="aviso erro"><strong>${esc(titulo)}</strong>${esc(detalhe)}</div>`;
+}
+
+async function buscar() {
+  const cfg = lerCfg();
+  if (!cfg.url) { abrirCfg(); return; }
+  const ini = $('#dIni').value, fim = $('#dFim').value;
+  if (!ini || !fim) { toast('Informe as duas datas do período.'); return; }
+  if (ini > fim) { toast('A data inicial deve ser anterior à final.'); return; }
+
+  const btn = $('#btnBuscar');
+  btn.disabled = true; btn.textContent = 'Buscando…';
+  $('#aviso').innerHTML = '<div class="aviso">Consultando o Comunica PJe. São três buscas em sequência, pode levar alguns instantes.</div>';
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 150000);
+  try {
+    const url = new URL(cfg.url);
+    url.searchParams.set('dataInicio', ini);
+    url.searchParams.set('dataFim', fim);
+    const headers = { Accept: 'application/json' };
+    if (cfg.cab && cfg.val) headers[cfg.cab] = cfg.val;
+    const r = await fetch(url, { headers, signal: ctl.signal });
+    if (!r.ok) throw new Error(`O webhook respondeu com o status ${r.status}. Confira se o workflow está ativo e se a URL é a de produção.`);
+    const txt = await r.text();
+    let json;
+    try { json = JSON.parse(txt); } catch (e) { throw new Error('A resposta do webhook não é um JSON válido. Verifique o nó "Respond to Webhook".'); }
+    aplicarPayload(json, false);
+    toast(`${estado.itens.length} comunicação(ões) carregada(s).`);
+  } catch (e) {
+    if (e.name === 'AbortError') mostrarErro('Tempo esgotado', 'O webhook demorou mais de 2 minutos para responder.');
+    else if (e instanceof TypeError) mostrarErro('Não foi possível conectar ao webhook', 'Confira a URL e se o CORS está liberado no nó Webhook (Options > Allowed Origins).');
+    else mostrarErro('Falha ao buscar comunicações', e.message);
+  } finally {
+    clearTimeout(timer);
+    btn.disabled = false; btn.textContent = 'Buscar comunicações';
+  }
+}
+
+/* ============================ DADOS DE EXEMPLO ============================ */
+function dadosDemo() {
+  const h = hoje();
+  const iso = (off) => chaveDia(somaDias(h, off));
+  const mk = (id, num, mask, orgao, tipo, off, texto, partes, advs) => ({
+    id, numero_processo: num, numeroprocessocommascara: mask, nomeOrgao: orgao, siglaTribunal: 'TJRN',
+    data_disponibilizacao: iso(off), tipoComunicacao: tipo, meiocompleto: 'Diário de Justiça Eletrônico',
+    link: 'https://comunica.pje.jus.br/', texto,
+    destinatarios: partes, destinatarioadvogados: advs.map((a) => ({ advogado: a })),
+  });
+  const kayo = { nome: 'KAYO MELO DE SOUSA', numero_oab: '12873', uf_oab: 'RN' };
+  const A = mk(1, '08012345620268205001', '0801234-56.2026.8.20.5001', '3ª Vara Cível da Comarca de Natal', 'Intimação', -12,
+    'Fica a parte autora intimada para, no prazo de 5 (cinco) dias, apresentar os documentos solicitados pelo juízo.',
+    [{ nome: 'Maria das Dores Oliveira', polo: 'A' }, { nome: 'Banco Exemplo S.A.', polo: 'P' }], [kayo]);
+  const B = mk(2, '08023456720268205002', '0802345-67.2026.8.20.5002', '1ª Vara de Família da Comarca de Natal', 'Intimação', -4,
+    'Intime-se a parte requerente para se manifestar sobre o laudo apresentado, no prazo de 5 (cinco) dias.',
+    [{ nome: 'José Carlos Ferreira', polo: 'A' }, { nome: 'Ana Paula Ferreira', polo: 'P' }], [kayo]);
+  const C = mk(3, '08034567820268205003', '0803456-78.2026.8.20.5003', 'Vara Única da Comarca de Ceará-Mirim', 'Intimação', -1,
+    'Fica o advogado intimado para apresentar réplica à contestação no prazo de 15 (quinze) dias úteis.',
+    [{ nome: 'Comercial Potiguar Ltda.', polo: 'A' }, { nome: 'Francisco de Assis Lima', polo: 'P' }], [kayo]);
+  const D = mk(4, '08045678920268205004', '0804567-89.2026.8.20.5004', '2ª Vara Criminal da Comarca de Natal', 'Citação', 0,
+    'Cite-se o réu para apresentar resposta à acusação no prazo de 10 (dez) dias.',
+    [{ nome: 'KAYO MELO DE SOUSA', polo: 'P' }], []);
+  const E = mk(5, '08056789020268205005', '0805678-90.2026.8.20.5005', '4ª Vara Cível da Comarca de Natal', 'Lista de distribuição', 0,
+    'Processo distribuído por sorteio. Aguarde-se o despacho inicial.',
+    [{ nome: 'Rita de Cássia Souza', polo: 'A' }], [kayo]);
+  const F = mk(6, '08067890120268205006', '0806789-01.2026.8.20.5006', 'Juizado Especial Cível de Natal', 'Intimação', -2,
+    'Intime-se a parte para cumprir a obrigação no prazo de 30 (trinta) dias corridos, sob pena de multa.',
+    [{ nome: 'Condomínio Residencial Exemplo', polo: 'A' }, { nome: 'Pedro Henrique Alves', polo: 'P' }], [kayo]);
+  const G = mk(7, '08078901220268205007', '0807890-12.2026.8.20.5007', '2ª Vara da Fazenda Pública de Natal', 'Intimação', -3,
+    'Intimem-se as partes para informar se há provas a produzir, no prazo de 48 (quarenta e oito) horas.',
+    [{ nome: 'Sebastião Gomes da Silva', polo: 'A' }, { nome: 'Município de Exemplo', polo: 'P' }], [kayo]);
+  return { oab: [A, B, C, E], parte: [D], advogado: [C, F, G], erros: {} };
+}
+
+/* ============================ RELATÓRIO EM PDF ============================ */
+function relatorioHTML(grupos, itens) {
+  const f = estado.filtros;
+  const ini = $('#dIni').value, fim = $('#dFim').value;
+  const periodo = estado.demo ? 'Dados de exemplo' : (ini === fim ? fmt(parseData(ini)) : `${fmt(parseData(ini))} a ${fmt(parseData(fim))}`);
+  const filtrosAtivos = [];
+  if (f.texto) filtrosAtivos.push(`busca “${f.texto}”`);
+  if (f.tipo) filtrosAtivos.push(`tipo ${f.tipo}`);
+  if (f.buscas.size) filtrosAtivos.push([...f.buscas].map((b) => BUSCAS[b].rotulo).join(' / '));
+  if (f.dia) filtrosAtivos.push(f.dia === 'vencidos' ? 'somente vencidos' : `vencimento em ${fmt(parseData(f.dia))}`);
+
+  const por = (o) => itens.filter((i) => i.origens.includes(o)).length;
+  const atencao = itens.filter((i) => ['vencido', 'hoje', 'breve'].includes(i.urg)).length;
+  const box = (n, r, cor) => `<td style="width:20%;padding:4px"><div style="border:1px solid #e0e6ed;border-top:4px solid ${cor};border-radius:6px;padding:9px;text-align:center"><div style="font-size:22px;font-weight:bold;color:${cor}">${n}</div><div style="font-size:10.5px;color:#555">${r}</div></div></td>`;
+
+  const cards = (g) => g.itens.map((it) => {
+    const u = URG[it.urg];
+    const selos = it.origens.map((o) => `<span style="display:inline-block;border:1px solid ${BUSCAS[o].cor};color:${BUSCAS[o].cor};border-radius:9px;padding:1px 7px;font-size:9.5px;font-weight:bold;margin-right:4px">${esc(BUSCAS[o].rotulo)}</span>`).join('');
+    const prazo = it.prazo && it.venc
+      ? `<p style="margin:6px 0 0;padding:5px 8px;border-radius:4px;background:#f6f8fb;font-size:11.5px"><strong style="color:${u.cor === '#8e9bb3' ? '#555' : u.cor}">Prazo de ${esc(it.prazo.rotulo)}</strong> – vencimento estimado: <strong>${esc(textoVenc(it))}</strong></p>`
+      : `<p style="margin:6px 0 0;font-size:11.5px;color:#777">Nenhum prazo identificado no texto – conferir no processo.</p>`;
+    return `
+    <div style="border:1px solid #e0e6ed;border-left:5px solid ${u.cor};border-radius:6px;padding:11px 14px;margin-bottom:9px;page-break-inside:avoid;break-inside:avoid">
+      <div style="margin-bottom:4px">${selos}</div>
+      <div style="font-size:14.5px;font-weight:bold;color:#1a2b3c;font-family:'Courier New',monospace">${esc(it.numero)}</div>
+      <p style="margin:4px 0 0;font-size:11.5px"><strong>Órgão:</strong> ${esc(it.orgao)}${it.tribunal ? ' (' + esc(it.tribunal) + ')' : ''}</p>
+      <p style="margin:2px 0 0;font-size:11.5px"><strong>Disponibilizada em:</strong> ${it.disp ? fmt(it.disp) : 'N/A'} &nbsp; <strong>Tipo:</strong> ${esc(it.tipo)} &nbsp; <strong>Meio:</strong> ${esc(it.meio)}</p>
+      ${prazo}
+      <p style="margin:6px 0 0;padding-top:5px;border-top:1px dashed #ddd;font-size:11.5px;color:#444"><strong>Parte(s):</strong> ${esc(it.partes)}</p>
+      ${it.advogados ? `<p style="margin:2px 0 0;font-size:11px;color:#555"><strong>Advogado(s):</strong> ${esc(it.advogados)}</p>` : ''}
+      ${it.link ? `<p style="margin:5px 0 0;font-size:10.5px"><a href="${esc(it.link)}" style="color:#0b63c5">Abrir no PJe</a></p>` : ''}
+    </div>`;
+  }).join('');
+
+  const secoes = grupos.map((g) => `
+    <div style="margin:18px 0 8px;padding:7px 11px;background:#f3f5f8;border-left:6px solid ${g.cor};border-radius:3px;page-break-after:avoid;break-after:avoid">
+      <div style="font-size:14px;font-weight:bold;color:#1a2b3c">${esc(g.titulo)}</div>
+      <div style="font-size:10.5px;color:#666">${g.itens.length} comunicação(ões)</div>
+    </div>${cards(g)}`).join('');
+
+  return `
+  <div style="font-family:Helvetica,Arial,sans-serif;color:#333;background:#fff">
+    <table style="width:100%;border-collapse:collapse;border-bottom:2px solid #1a2b3c;margin-bottom:12px"><tr>
+      <td style="padding-bottom:10px">
+        <div style="font-size:22px;font-weight:bold;color:#1a2b3c">Relatório de Prazos</div>
+        <div style="font-size:12px;color:#666;margin-top:3px">${esc(ESCRITORIO)}</div>
+      </td>
+      <td style="padding-bottom:10px;text-align:right;vertical-align:bottom">
+        <div style="font-size:12px;font-weight:bold;color:#1a2b3c">Gerado em ${new Date().toLocaleString('pt-BR')}</div>
+        <div style="font-size:11px;color:#666">Período: ${esc(periodo)}</div>
+      </td>
+    </tr></table>
+    <table style="width:100%;border-collapse:collapse"><tr>
+      ${box(itens.length, 'Comunicações', '#1a2b3c')}
+      ${box(por('oab'), 'OAB 12873/RN', BUSCAS.oab.cor)}
+      ${box(por('parte'), 'Nome como parte', BUSCAS.parte.cor)}
+      ${box(por('advogado'), 'Nome como advogado', BUSCAS.advogado.cor)}
+      ${box(atencao, 'Vencidos ou em até 5 dias', '#d9534f')}
+    </tr></table>
+    <p style="font-size:10px;color:#777;margin:6px 0 0">Uma mesma comunicação pode ser encontrada por mais de uma busca; ela aparece uma única vez, com todas as buscas que a encontraram.${filtrosAtivos.length ? ' <strong>Filtros aplicados:</strong> ' + esc(filtrosAtivos.join('; ')) + '.' : ''}</p>
+    ${secoes}
+    <p style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#777">Os vencimentos são estimativas calculadas automaticamente a partir do prazo informado no texto da comunicação (dias úteis, fins de semana, feriados nacionais fixos e recesso forense de 20/12 a 20/01). Não consideram feriados móveis, estaduais ou municipais. Confira sempre a contagem no processo.</p>
+  </div>`;
+}
+
+async function baixarPdf() {
+  const itens = filtrados();
+  if (!itens.length) { toast('Não há comunicações para incluir no relatório.'); return; }
+  if (!window.html2pdf) { toast('A biblioteca de PDF não carregou. Verifique a conexão e recarregue a página.'); return; }
+
+  const btn = $('#btnPdf');
+  btn.disabled = true; btn.textContent = 'Gerando PDF…';
+  const grupos = agrupar(itens, estado.agrupar);
+  const box = document.createElement('div');
+  box.style.cssText = 'position:fixed;left:-10000px;top:0;width:190mm;background:#fff';
+  box.innerHTML = relatorioHTML(grupos, itens);
+  document.body.appendChild(box);
+
+  const d = new Date();
+  const nome = `Relatório_de_Prazos_${p2(d.getDate())}_${p2(d.getMonth()+1)}_${d.getFullYear()}.pdf`;
+  try {
+    await html2pdf().set({
+      margin: [10, 10, 14, 10],
+      filename: nome,
+      image: { type: 'jpeg', quality: 0.96 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'], avoid: ['div[style*="page-break-inside"]'] },
+      enableLinks: true,
+    }).from(box).toPdf().get('pdf').then((pdf) => {
+      const n = pdf.internal.getNumberOfPages();
+      const w = pdf.internal.pageSize.getWidth(), h = pdf.internal.pageSize.getHeight();
+      for (let i = 1; i <= n; i++) {
+        pdf.setPage(i); pdf.setFontSize(8); pdf.setTextColor(130);
+        pdf.text(`Página ${i} de ${n}`, w / 2, h - 6, { align: 'center' });
+      }
+    }).save();
+    toast('Relatório baixado.');
+  } catch (e) {
+    toast('Não foi possível gerar o PDF.');
+  } finally {
+    box.remove();
+    btn.disabled = false; btn.textContent = 'Baixar relatório em PDF';
+  }
+}
+
+/* ============================ EVENTOS ============================ */
+function abrirCfg() {
+  const c = lerCfg();
+  $('#cUrl').value = c.url; $('#cCab').value = c.cab; $('#cVal').value = c.val;
+  $('#dlgCfg').showModal();
+}
+
+function limparFiltros() {
+  estado.filtros = { texto: '', tipo: '', buscas: new Set(), dia: null };
+  $('#fTexto').value = ''; $('#fTipo').value = '';
+  render();
+}
+
+function init() {
+  const h = chaveDia(hoje());
+  $('#dIni').value = h; $('#dFim').value = h;
+
+  $('#btnBuscar').addEventListener('click', buscar);
+  $('#btnPdf').addEventListener('click', baixarPdf);
+  $('#btnCfg').addEventListener('click', abrirCfg);
+  $('#btnLimpar').addEventListener('click', limparFiltros);
+  $('#cCancelar').addEventListener('click', () => $('#dlgCfg').close());
+  $('#formCfg').addEventListener('submit', () => {
+    const url = $('#cUrl').value.trim();
+    if (url) { try { new URL(url); } catch (e) { toast('URL inválida.'); return; } }
+    salvarCfg({ url, cab: $('#cCab').value.trim(), val: $('#cVal').value });
+    if (url) setTimeout(buscar, 50);
+  });
+
+  $('#fTexto').addEventListener('input', (e) => { estado.filtros.texto = e.target.value; renderLista(); });
+  $('#fTipo').addEventListener('change', (e) => { estado.filtros.tipo = e.target.value; renderLista(); });
+  $('#fAgrupar').addEventListener('change', (e) => { estado.agrupar = e.target.value; renderLista(); });
+
+  $('#regua').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-dia]'); if (!b) return;
+    estado.filtros.dia = estado.filtros.dia === b.dataset.dia ? null : b.dataset.dia;
+    renderRegua(); renderLista();
+  });
+  $('#resumo').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-busca]'); if (!b) return;
+    const s = estado.filtros.buscas; const k = b.dataset.busca;
+    s.has(k) ? s.delete(k) : s.add(k);
+    renderResumo(); renderLista();
+  });
+  $('#lista').addEventListener('click', async (e) => {
+    const acao = e.target.closest('[data-acao]');
+    if (acao) {
+      if (acao.dataset.acao === 'buscar') buscar();
+      if (acao.dataset.acao === 'demo') aplicarPayload(dadosDemo(), true);
+      if (acao.dataset.acao === 'limpar') limparFiltros();
+      return;
+    }
+    const c = e.target.closest('[data-copiar]');
+    if (c) {
+      try { await navigator.clipboard.writeText(c.dataset.copiar); toast('Número copiado.'); }
+      catch (err) { toast('Não foi possível copiar.'); }
+    }
+  });
+
+  render();
+  if (lerCfg().url) buscar();
+}
+
+init();
+})();
 </script>
 </body>
 </html>
